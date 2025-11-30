@@ -6,4 +6,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TradeCompanyIS.Application\TradeCompanyIS.Application.csproj" />
+    <ProjectReference Include="..\TradeCompanyIS.Core\TradeCompanyIS.Core.csproj" />
+    <ProjectReference Include="..\TradeCompanyIS.DataAccess.Postgres\TradeCompanyIS.DataAccess.Postgres.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TradeCompanyIS.Core\TradeCompanyIS.Core.csproj" />
+    <ProjectReference Include="..\TradeCompanyIS.DataAccess.Postgres\TradeCompanyIS.DataAccess.Postgres.csproj" />
+  </ItemGroup>
+
 </Project>
