@@ -19,6 +19,7 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
                 Id = order.Id,
                 DateReg = order.DateReg,
                 IdClients = order.IdClients,
+                IdItem = order.IdItem,
                 Quantity = order.Quantity,
             };
             await _context.OredersTable.AddAsync(orderEntity, token);

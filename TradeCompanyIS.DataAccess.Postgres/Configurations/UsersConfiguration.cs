@@ -8,7 +8,13 @@ namespace TradeCompanyIS.DataAccess.Postgres.Configurations
     {
         public void Configure(EntityTypeBuilder<UsersEntity> builder)
         {
-            throw new NotImplementedException();
+            builder.HasKey(a => a.Id);
+            builder.Property(a => a.Username)
+                .IsRequired();
+            builder.Property(a => a.HashPassword)
+                .IsRequired();
+            builder.Property(a => a.Role)
+                .IsRequired();
         }
     }
 }
