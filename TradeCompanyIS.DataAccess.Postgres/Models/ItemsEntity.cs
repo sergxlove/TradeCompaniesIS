@@ -8,5 +8,9 @@
         public decimal Price { get; set; }
         public Guid IdWareHouse { get; set; }
         public int QuantityWareHouse { get; set; }
+
+        public virtual WareHousesEntity? WareHouseRef { get; set; }
+        public virtual List<OrdersEntity> OrdersRef { get; set; } = new();
+        public virtual List<SuppliesEntity> SuppliesRef { get; set; } = new();
     }
 }

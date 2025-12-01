@@ -8,5 +8,8 @@
         public string Email { get; set; } = string.Empty;
         public Guid IdCountry { get; set; }
         public string AddressDelivery { get; set; } = string.Empty;
+
+        public virtual CountriesEntity? CountriesRef { get; set; }
+        public virtual List<OrdersEntity> OrdersRef { get; set; } = new();
     }
 }

@@ -4,7 +4,11 @@
     {
         public Guid Id { get; set; }
         public Guid IdClients { get; set; }
+        public Guid IdItem { get; set; }
         public DateOnly DateReg { get; set; }
         public int Quantity { get; set; }
+
+        public virtual ClientsEntity? ClientsRef { get; set; }
+        public virtual ItemsEntity? ItemsRef { get; set; }
     }
 }

@@ -8,7 +8,23 @@ namespace TradeCompanyIS.DataAccess.Postgres.Configurations
     {
         public void Configure(EntityTypeBuilder<OrdersEntity> builder)
         {
-            throw new NotImplementedException();
+            builder.HasKey(a => a.Id);
+            builder.Property(a => a.IdClients)
+                .IsRequired();
+            builder.Property(a => a.IdItem)
+                .IsRequired();
+            builder.Property(a => a.DateReg)
+                .IsRequired();
+            builder.Property(a => a.Quantity)
+                .IsRequired();
+            builder.HasOne(a => a.ClientsRef)
+                .WithMany(a => a.OrdersRef)
+                .HasForeignKey(a => a.IdClients)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(a => a.ItemsRef)
+                .WithMany(a => a.OrdersRef)
+                .HasForeignKey(a => a.IdItem)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

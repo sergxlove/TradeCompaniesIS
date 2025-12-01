@@ -6,9 +6,8 @@ namespace TradeCompanyIS.DataAccess.Postgres
 {
     public class TradeCompanyDbContext : DbContext
     {
-        public TradeCompanyDbContext(DbContextOptions<TradeCompanyDbContext> options) 
+        public TradeCompanyDbContext(DbContextOptions<TradeCompanyDbContext> options)
             : base(options) { }
-
         public DbSet<ClientsEntity> ClientsTable { get; set; }
         public DbSet<CountriesEntity> CountriesTable { get; set; }
         public DbSet<ItemsEntity> ItemsTable { get; set; }
@@ -17,12 +16,10 @@ namespace TradeCompanyIS.DataAccess.Postgres
         public DbSet<SuppliesEntity> SuppliesTable { get; set; }
         public DbSet<UsersEntity> UsersTable { get; set; }
         public DbSet<WareHousesEntity> WareHousesTable { get; set; }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
         }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new ClientsConfiguration());
