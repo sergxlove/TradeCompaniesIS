@@ -1,0 +1,335 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Складская система - Вход</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #475569;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .version {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+
+            .logo h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-card">
+            <div class="logo">
+                <h1>📦 Складская система</h1>
+                <p>Управление товарами и запасами</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Логин</label>
+                    <input type="text"
+                           id="username"
+                           placeholder="Введите ваш логин"
+                           required
+                           autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password"
+                           id="password"
+                           placeholder="Введите пароль"
+                           required
+                           autocomplete="current-password">
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    Неверный логин или пароль
+                </div>
+
+                <button type="submit" class="btn" id="loginBtn">
+                    Войти в систему
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px;">Авторизация...</p>
+            </div>
+
+            <div class="version">
+                Версия 1.0.0 • Система управления
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Тестовые данные пользователей
+        const users = {
+            'admin': {
+                password: 'admin123',
+                role: 'admin',
+                name: 'Администратор'
+            },
+            'merchandiser': {
+                password: 'merch123',
+                role: 'merchandiser',
+                name: 'Товаровед'
+            },
+            'client': {
+                password: 'client123',
+                role: 'client',
+                name: 'Клиент'
+            }
+        };
+
+        // Текущий пользователь
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.getElementById('loginForm');
+            const loginBtn = document.getElementById('loginBtn');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Обработка отправки формы
+            loginForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+
+                // Показать загрузку
+                loginBtn.style.display = 'none';
+                loading.style.display = 'block';
+                errorMessage.style.display = 'none';
+
+                // Имитация задержки сети
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Проверка учетных данных
+                const user = users[username];
+
+                if (user && user.password === password) {
+                    // Успешная авторизация
+                    currentUser = {
+                        username: username,
+                        ...user
+                    };
+
+                    // Здесь будет переход на панель пользователя
+                    alert(`Добро пожаловать, ${user.name}! (Роль: ${user.role})`);
+
+                    // Сброс формы и состояния
+                    loginForm.reset();
+
+                    // TODO: Здесь будет переход на соответствующий дашборд
+                    // Например: window.location.href = `/${user.role}-dashboard.html`;
+
+                } else {
+                    // Неверные учетные данные
+                    errorMessage.style.display = 'block';
+                    loginBtn.style.display = 'block';
+                    loading.style.display = 'none';
+
+                    // Добавить анимацию ошибки
+                    loginForm.classList.add('error');
+                    setTimeout(() => loginForm.classList.remove('error'), 500);
+                }
+            });
+
+            // Добавить анимацию при фокусе
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function () {
+                    this.parentElement.classList.add('focused');
+                });
+
+                input.addEventListener('blur', function () {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+
+            // Автозаполнение для тестирования (можно удалить в продакшене)
+            function autoFillCredentials(username) {
+                document.getElementById('username').value = username;
+                document.getElementById('password').value = users[username]?.password || '';
+            }
+
+            // Горячие клавиши для тестирования
+            document.addEventListener('keydown', function (e) {
+                if (e.altKey) {
+                    switch (e.key) {
+                        case '1':
+                            autoFillCredentials('admin');
+                            break;
+                        case '2':
+                            autoFillCredentials('merchandiser');
+                            break;
+                        case '3':
+                            autoFillCredentials('client');
+                            break;
+                    }
+                }
+            });
+        });
+
+        // Функция для выхода (будет использоваться позже)
+        function logout() {
+            currentUser = null;
+            // TODO: Редирект на страницу входа
+        }
+    </script>
+</body>
+</html>

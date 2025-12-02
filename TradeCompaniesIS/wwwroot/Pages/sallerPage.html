@@ -1,0 +1,1260 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель товароведа</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --accent: #f59e0b;
+            --accent-hover: #d97706;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #475569;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-role {
+            background: var(--accent);
+            color: #1e293b;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+            .logout-btn:hover {
+                background: var(--danger);
+                border-color: var(--danger);
+            }
+
+        /* Main container */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 73px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 30px 0;
+        }
+
+        .nav-item {
+            padding: 16px 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+            .nav-item:hover {
+                background: var(--bg-card);
+            }
+
+            .nav-item.active {
+                background: var(--bg-card);
+                border-left-color: var(--accent);
+                color: var(--accent);
+            }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .page {
+            display: none;
+        }
+
+            .page.active {
+                display: block;
+            }
+
+        .page-title {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        /* Tables */
+        .table-container {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .status-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .status-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #1e293b;
+        }
+
+            .btn-primary:hover {
+                background: var(--accent-hover);
+            }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        /* Forms */
+        .form-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                color: var(--text-primary);
+                font-weight: 500;
+            }
+
+                .form-group label.required::after {
+                    content: " *";
+                    color: var(--danger);
+                }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                width: 100%;
+                padding: 12px 16px;
+                background: var(--bg-secondary);
+                border: 2px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-primary);
+                font-size: 15px;
+            }
+
+                .form-group input:focus,
+                .form-group select:focus,
+                .form-group textarea:focus {
+                    outline: none;
+                    border-color: var(--accent);
+                }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Search and filters */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+            .tab.active {
+                border-bottom-color: var(--accent);
+                color: var(--accent);
+                font-weight: 600;
+            }
+
+        .tab-content {
+            display: none;
+        }
+
+            .tab-content.active {
+                display: block;
+            }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 0;
+            }
+
+            .nav-item {
+                padding: 12px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            📦 Панель товароведа
+        </div>
+        <div class="user-info">
+            <span class="user-role">Товаровед</span>
+            <button class="logout-btn" onclick="logout()">Выйти</button>
+        </div>
+    </div>
+
+    <!-- Main container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="nav-item active" data-page="products">
+                📋 Товары
+            </div>
+            <div class="nav-item" data-page="supplies">
+                🚚 Поставки
+            </div>
+            <div class="nav-item" data-page="prices">
+                💰 Цены
+            </div>
+            <div class="nav-item" data-page="suppliers">
+                🏭 Поставщики
+            </div>
+            <div class="nav-item" data-page="delete">
+                🗑️ Удаление
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Товары -->
+            <div class="page active" id="products-page">
+                <h1 class="page-title">Управление товарами</h1>
+                <p class="page-subtitle">Добавление и редактирование товаров в каталоге</p>
+
+                <div class="search-container">
+                    <input type="text" class="search-input" id="product-search" placeholder="Поиск товаров по названию...">
+                    <button class="btn btn-primary" onclick="searchProducts()">Поиск</button>
+                    <button class="btn btn-success" onclick="showAddProductModal()">+ Добавить товар</button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Наименование</th>
+                                <th>Описание</th>
+                                <th>Наценка</th>
+                                <th>Запасы</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table">
+                            <!-- Заполняется через JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Поставки -->
+            <div class="page" id="supplies-page">
+                <h1 class="page-title">Создание поставки</h1>
+                <p class="page-subtitle">Добавление товаров в новую поставку</p>
+
+                <div class="form-card">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="supply-supplier" class="required">Поставщик</label>
+                            <select id="supply-supplier">
+                                <option value="">Выберите поставщика...</option>
+                                <!-- Заполняется через JS -->
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="supply-warehouse" class="required">Склад</label>
+                            <select id="supply-warehouse">
+                                <option value="">Выберите склад...</option>
+                                <!-- Заполняется через JS -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Товары в поставке</label>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Товар</th>
+                                        <th>Количество</th>
+                                        <th>Цена поставки</th>
+                                        <th>Сумма</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="supply-items">
+                                    <tr>
+                                        <td colspan="5" class="loading">Добавьте товары в поставку</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="add-product-select">Добавить товар</label>
+                            <select id="add-product-select">
+                                <option value="">Выберите товар...</option>
+                                <!-- Заполняется через JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="add-product-quantity">Количество</label>
+                            <input type="number" id="add-product-quantity" min="1" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="add-product-price">Цена поставки</label>
+                            <input type="number" id="add-product-price" min="10" placeholder="Мин. 10 руб.">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="addProductToSupply()">Добавить товар</button>
+
+                    <div class="form-actions">
+                        <button class="btn btn-success" onclick="createSupply()">Создать поставку</button>
+                        <button class="btn" onclick="clearSupplyForm()">Очистить</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Цены -->
+            <div class="page" id="prices-page">
+                <h1 class="page-title">Управление ценами</h1>
+                <p class="page-subtitle">Обновление цен товаров</p>
+
+                <div class="form-card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Товар</th>
+                                    <th>Текущая цена</th>
+                                    <th>Новая цена</th>
+                                    <th>Изменение</th>
+                                </tr>
+                            </thead>
+                            <tbody id="new-prices-table">
+                                <!-- Заполняется через JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="import-prices">Импорт новых цен (JSON)</label>
+                        <textarea id="import-prices" rows="5" placeholder='[{"productName": "Товар 1", "newPrice": 1000}, ...]'></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-success" onclick="importNewPrices()">Импортировать цены</button>
+                        <button class="btn btn-primary" onclick="updatePrices()">Обновить цены</button>
+                        <button class="btn" onclick="clearNewPrices()">Очистить</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Поставщики -->
+            <div class="page" id="suppliers-page">
+                <h1 class="page-title">Управление поставщиками</h1>
+                <p class="page-subtitle">Список поставщиков и добавление новых</p>
+
+                <div class="search-container">
+                    <button class="btn btn-success" onclick="showAddSupplierModal()">+ Добавить поставщика</button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Название</th>
+                                <th>Страна</th>
+                                <th>Телефон</th>
+                                <th>Адрес</th>
+                            </tr>
+                        </thead>
+                        <tbody id="suppliers-table">
+                            <!-- Заполняется через JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Удаление -->
+            <div class="page" id="delete-page">
+                <h1 class="page-title">Удаление товаров</h1>
+                <p class="page-subtitle">Безопасное удаление непопулярных товаров</p>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID товара</th>
+                                <th>Наименование</th>
+                                <th>Покупки</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="delete-table">
+                            <!-- Заполняется через JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления товара -->
+    <div class="modal" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Добавление товара</h2>
+                <button class="close-modal" onclick="closeModal('addProductModal')">×</button>
+            </div>
+
+            <div class="form-group">
+                <label class="required">Наименование</label>
+                <input type="text" id="new-product-name" placeholder="Введите название товара">
+            </div>
+
+            <div class="form-group">
+                <label class="required">Описание</label>
+                <textarea id="new-product-description" rows="3" placeholder="Опишите товар"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="required">Наценка (%)</label>
+                    <input type="number" id="new-product-markup" min="0" max="500" value="25">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-success" onclick="addNewProduct()">Добавить</button>
+                <button class="btn" onclick="closeModal('addProductModal')">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления поставщика -->
+    <div class="modal" id="addSupplierModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Добавление поставщика</h2>
+                <button class="close-modal" onclick="closeModal('addSupplierModal')">×</button>
+            </div>
+
+            <div class="form-group">
+                <label class="required">Название</label>
+                <input type="text" id="new-supplier-name" placeholder="Введите название компании">
+            </div>
+
+            <div class="form-group">
+                <label class="required">Телефон</label>
+                <input type="text" id="new-supplier-phone" placeholder="+7 123 456 78 90">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="required">Страна</label>
+                    <select id="new-supplier-country">
+                        <option value="1">Россия</option>
+                        <option value="2">США</option>
+                        <option value="3">Китай</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="required">Адрес</label>
+                <textarea id="new-supplier-address" rows="2" placeholder="Введите адрес поставщика"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-success" onclick="addNewSupplier()">Добавить</button>
+                <button class="btn" onclick="closeModal('addSupplierModal')">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Мок-данные
+        const mockData = {
+            products: [
+                { id: 4, name: "Промышленный вентилятор", description: "Вентилятор с высокой производительностью", markup: 25, stock: 105, purchases: 1 },
+                { id: 7, name: "Кран-балка", description: "Кран-балка с грузоподъемностью до 5 тонн", markup: 40, stock: 95, purchases: 5 },
+                { id: 8, name: "Лазерный уровень", description: "Лазерный уровень для точного выравнивания", markup: 18, stock: 115, purchases: 3 },
+                { id: 15, name: "Печь для термообработки", description: "Печь для термообработки металлов", markup: 60, stock: 75, purchases: 0 },
+                { id: 20, name: "Анализатор газов", description: "Анализатор газов для контроля выбросов", markup: 90, stock: 0, purchases: 1 }
+            ],
+
+            suppliers: [
+                { id: 1, name: "Торговая компания 'Север'", country: "Россия", phone: "+7 123 456 78 90", address: "Москва, ул. Примерная, д. 1" },
+                { id: 2, name: "Global Supplies Inc.", country: "США", phone: "+1 234 567 89 01", address: "Нью-Йорк, ул. Примерная, д. 2" },
+                { id: 3, name: "China Trade Co.", country: "Китай", phone: "+86 123 456 78 90", address: "Пекин, ул. Примерная, д. 3" }
+            ],
+
+            warehouses: [
+                { id: 1, address: "Москва, ул. Ленина, д. 1", country: "Россия" },
+                { id: 2, address: "Санкт-Петербург, ул. Невский пр., д. 2", country: "Россия" }
+            ],
+
+            newPrices: [
+                { productName: "Промышленный вентилятор", currentPrice: 25000, newPrice: 26500 },
+                { productName: "Кран-балка", currentPrice: 45000, newPrice: 43000 }
+            ]
+        };
+
+        // Текущая поставка
+        let currentSupply = {
+            items: [],
+            supplierId: null,
+            warehouseId: null
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация навигации
+            initializeNavigation();
+
+            // Загрузка данных
+            loadProducts();
+            loadSuppliers();
+            loadPrices();
+            loadDeleteProducts();
+
+            // Заполнение выпадающих списков
+            populateSelects();
+        });
+
+        // Навигация
+        function initializeNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const pageId = this.getAttribute('data-page');
+                    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                    document.getElementById(pageId + '-page').classList.add('active');
+                });
+            });
+        }
+
+        // Модальные окна
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showAddProductModal() {
+            showModal('addProductModal');
+        }
+
+        function showAddSupplierModal() {
+            showModal('addSupplierModal');
+        }
+
+        // 1. Управление товарами
+        function loadProducts() {
+            const tbody = document.getElementById('products-table');
+            tbody.innerHTML = '';
+
+            mockData.products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td><strong>${product.name}</strong></td>
+                    <td>${product.description}</td>
+                    <td><span class="status-badge status-info">${product.markup}%</span></td>
+                    <td>${product.stock} шт.</td>
+                    <td>
+                        <button class="btn btn-small btn-primary" onclick="editProduct(${product.id})">Изменить</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function searchProducts() {
+            const searchTerm = document.getElementById('product-search').value.toLowerCase();
+
+            const filtered = mockData.products.filter(product =>
+                product.name.toLowerCase().includes(searchTerm) ||
+                product.description.toLowerCase().includes(searchTerm)
+            );
+
+            const tbody = document.getElementById('products-table');
+            tbody.innerHTML = '';
+
+            filtered.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td><strong>${product.name}</strong></td>
+                    <td>${product.description}</td>
+                    <td><span class="status-badge status-info">${product.markup}%</span></td>
+                    <td>${product.stock} шт.</td>
+                    <td>
+                        <button class="btn btn-small btn-primary" onclick="editProduct(${product.id})">Изменить</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function addNewProduct() {
+            const name = document.getElementById('new-product-name').value;
+            const description = document.getElementById('new-product-description').value;
+            const markup = parseInt(document.getElementById('new-product-markup').value);
+
+            if (!name || !description) {
+                alert('Заполните обязательные поля');
+                return;
+            }
+
+            const newProduct = {
+                id: Math.max(...mockData.products.map(p => p.id)) + 1,
+                name: name,
+                description: description,
+                markup: markup,
+                stock: 0,
+                purchases: 0
+            };
+
+            mockData.products.push(newProduct);
+            loadProducts();
+            closeModal('addProductModal');
+            alert(`Товар "${name}" добавлен`);
+        }
+
+        function editProduct(productId) {
+            const product = mockData.products.find(p => p.id === productId);
+            if (product) {
+                const newMarkup = prompt(`Введите новую наценку для товара "${product.name}":`, product.markup);
+                if (newMarkup !== null) {
+                    const markup = parseInt(newMarkup);
+                    if (!isNaN(markup) && markup >= 0 && markup <= 500) {
+                        product.markup = markup;
+                        loadProducts();
+                        alert('Наценка изменена');
+                    } else {
+                        alert('Введите корректное значение наценки (0-500%)');
+                    }
+                }
+            }
+        }
+
+        // 3. Управление поставками
+        function populateSelects() {
+            // Поставщики
+            const supplierSelect = document.getElementById('supply-supplier');
+            supplierSelect.innerHTML = '<option value="">Выберите поставщика...</option>';
+            mockData.suppliers.forEach(supplier => {
+                const option = document.createElement('option');
+                option.value = supplier.id;
+                option.textContent = `${supplier.name} (${supplier.country})`;
+                supplierSelect.appendChild(option);
+            });
+
+            // Склады
+            const warehouseSelect = document.getElementById('supply-warehouse');
+            warehouseSelect.innerHTML = '<option value="">Выберите склад...</option>';
+            mockData.warehouses.forEach(warehouse => {
+                const option = document.createElement('option');
+                option.value = warehouse.id;
+                option.textContent = `${warehouse.address}`;
+                warehouseSelect.appendChild(option);
+            });
+
+            // Товары для добавления в поставку
+            const productSelect = document.getElementById('add-product-select');
+            productSelect.innerHTML = '<option value="">Выберите товар...</option>';
+            mockData.products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.name} (ID: ${product.id})`;
+                productSelect.appendChild(option);
+            });
+        }
+
+        function addProductToSupply() {
+            const productId = parseInt(document.getElementById('add-product-select').value);
+            const quantity = parseInt(document.getElementById('add-product-quantity').value);
+            const price = parseInt(document.getElementById('add-product-price').value);
+
+            if (!productId || !quantity || !price) {
+                alert('Заполните все поля');
+                return;
+            }
+
+            if (price < 10) {
+                alert('Цена поставки не может быть ниже 10 рублей');
+                return;
+            }
+
+            const product = mockData.products.find(p => p.id === productId);
+            if (!product) {
+                alert('Товар не найден');
+                return;
+            }
+
+            // Проверяем, есть ли уже такой товар в поставке
+            const existingItem = currentSupply.items.find(item => item.productId === productId);
+
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                currentSupply.items.push({
+                    productId: productId,
+                    productName: product.name,
+                    quantity: quantity,
+                    price: price
+                });
+            }
+
+            updateSupplyItemsDisplay();
+
+            // Очищаем поля ввода
+            document.getElementById('add-product-select').value = '';
+            document.getElementById('add-product-quantity').value = 1;
+            document.getElementById('add-product-price').value = '';
+        }
+
+        function updateSupplyItemsDisplay() {
+            const tbody = document.getElementById('supply-items');
+            tbody.innerHTML = '';
+
+            if (currentSupply.items.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="loading">Добавьте товары в поставку</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            currentSupply.items.forEach((item, index) => {
+                const total = item.quantity * item.price;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.productName}</td>
+                    <td>${item.quantity} шт.</td>
+                    <td>${formatCurrency(item.price)}</td>
+                    <td>${formatCurrency(total)}</td>
+                    <td><button class="btn btn-small btn-danger" onclick="removeSupplyItem(${index})">×</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function removeSupplyItem(index) {
+            currentSupply.items.splice(index, 1);
+            updateSupplyItemsDisplay();
+        }
+
+        function createSupply() {
+            const supplierId = parseInt(document.getElementById('supply-supplier').value);
+            const warehouseId = parseInt(document.getElementById('supply-warehouse').value);
+
+            if (!supplierId || !warehouseId) {
+                alert('Выберите поставщика и склад');
+                return;
+            }
+
+            if (currentSupply.items.length === 0) {
+                alert('Добавьте хотя бы один товар в поставку');
+                return;
+            }
+
+            // Проверяем минимальные цены
+            for (const item of currentSupply.items) {
+                if (item.price < 10) {
+                    alert(`Цена товара "${item.productName}" ниже минимальной (10 руб.)`);
+                    return;
+                }
+            }
+
+            // Обновляем остатки товаров
+            currentSupply.items.forEach(item => {
+                const product = mockData.products.find(p => p.id === item.productId);
+                if (product) {
+                    product.stock += item.quantity;
+                }
+            });
+
+            alert(`Поставка успешно создана! Товары добавлены на склад.`);
+
+            // Очищаем форму
+            clearSupplyForm();
+
+            // Перезагружаем данные
+            loadProducts();
+        }
+
+        function clearSupplyForm() {
+            currentSupply.items = [];
+            updateSupplyItemsDisplay();
+            document.getElementById('supply-supplier').value = '';
+            document.getElementById('supply-warehouse').value = '';
+        }
+
+        // 8. Управление ценами
+        function loadPrices() {
+            const tbody = document.getElementById('new-prices-table');
+            tbody.innerHTML = '';
+
+            mockData.newPrices.forEach(price => {
+                const change = ((price.newPrice - price.currentPrice) / price.currentPrice * 100).toFixed(1);
+                const changeClass = price.newPrice > price.currentPrice ? 'status-success' : 'status-danger';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${price.productName}</td>
+                    <td>${formatCurrency(price.currentPrice)}</td>
+                    <td>${formatCurrency(price.newPrice)}</td>
+                    <td><span class="status-badge ${changeClass}">${change}%</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function importNewPrices() {
+            const jsonInput = document.getElementById('import-prices').value;
+
+            if (!jsonInput) {
+                alert('Введите данные в формате JSON');
+                return;
+            }
+
+            try {
+                const newPrices = JSON.parse(jsonInput);
+
+                if (!Array.isArray(newPrices)) {
+                    throw new Error('Должен быть массив объектов');
+                }
+
+                // Проверяем структуру
+                for (const item of newPrices) {
+                    if (!item.productName || !item.newPrice) {
+                        throw new Error('Каждый объект должен содержать productName и newPrice');
+                    }
+                }
+
+                // Добавляем текущие цены из продуктов
+                newPrices.forEach(newPrice => {
+                    const product = mockData.products.find(p => p.name === newPrice.productName);
+                    if (product) {
+                        // Находим существующую запись или создаем новую
+                        const existing = mockData.newPrices.find(p => p.productName === newPrice.productName);
+                        if (existing) {
+                            existing.newPrice = newPrice.newPrice;
+                        } else {
+                            mockData.newPrices.push({
+                                productName: newPrice.productName,
+                                currentPrice: calculateProductPrice(product),
+                                newPrice: newPrice.newPrice
+                            });
+                        }
+                    }
+                });
+
+                loadPrices();
+                alert(`Импортировано ${newPrices.length} цен`);
+
+            } catch (error) {
+                alert(`Ошибка: ${error.message}`);
+            }
+        }
+
+        function updatePrices() {
+            if (mockData.newPrices.length === 0) {
+                alert('Нет новых цен для обновления');
+                return;
+            }
+
+            alert(`Цены обновлены для ${mockData.newPrices.length} товаров`);
+            mockData.newPrices = [];
+            loadPrices();
+            document.getElementById('import-prices').value = '';
+        }
+
+        function clearNewPrices() {
+            mockData.newPrices = [];
+            loadPrices();
+            document.getElementById('import-prices').value = '';
+        }
+
+        // Вспомогательная функция для расчета цены продукта
+        function calculateProductPrice(product) {
+            const basePrice = 1000;
+            return Math.round(basePrice * (1 + product.markup / 100));
+        }
+
+        // 11. Поставщики
+        function loadSuppliers() {
+            const tbody = document.getElementById('suppliers-table');
+            tbody.innerHTML = '';
+
+            mockData.suppliers.forEach(supplier => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${supplier.id}</td>
+                    <td><strong>${supplier.name}</strong></td>
+                    <td>${supplier.country}</td>
+                    <td>${supplier.phone}</td>
+                    <td>${supplier.address}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function addNewSupplier() {
+            const name = document.getElementById('new-supplier-name').value;
+            const phone = document.getElementById('new-supplier-phone').value;
+            const countryId = document.getElementById('new-supplier-country').value;
+            const address = document.getElementById('new-supplier-address').value;
+
+            if (!name || !phone || !address) {
+                alert('Заполните обязательные поля');
+                return;
+            }
+
+            const countryMap = {
+                '1': 'Россия',
+                '2': 'США',
+                '3': 'Китай'
+            };
+
+            const newSupplier = {
+                id: Math.max(...mockData.suppliers.map(s => s.id)) + 1,
+                name: name,
+                phone: phone,
+                country: countryMap[countryId] || 'Россия',
+                address: address
+            };
+
+            mockData.suppliers.push(newSupplier);
+            loadSuppliers();
+            populateSelects(); // Обновляем выпадающий список в поставках
+            closeModal('addSupplierModal');
+            alert(`Поставщик "${name}" добавлен`);
+        }
+
+        // Удаление товаров
+        function loadDeleteProducts() {
+            const tbody = document.getElementById('delete-table');
+            tbody.innerHTML = '';
+
+            mockData.products.forEach(product => {
+                const canDelete = product.purchases < 2;
+                const statusText = canDelete ? 'Можно удалить' : 'Нельзя удалить';
+                const statusClass = canDelete ? 'status-danger' : 'status-success';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td><strong>${product.name}</strong></td>
+                    <td>${product.purchases} покупок</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        ${canDelete ?
+                            `<button class="btn btn-small btn-danger" onclick="deleteProduct(${product.id})">Удалить</button>` :
+                            '<button class="btn btn-small" disabled>Удалить</button>'
+                        }
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function deleteProduct(productId) {
+            const product = mockData.products.find(p => p.id === productId);
+            if (!product) return;
+
+            if (product.purchases >= 2) {
+                alert('Этот товар нельзя удалить (более 2 покупок)');
+                return;
+            }
+
+            if (confirm(`Удалить товар "${product.name}"?`)) {
+                mockData.products = mockData.products.filter(p => p.id !== productId);
+                alert(`Товар "${product.name}" удален`);
+                loadProducts();
+                loadDeleteProducts();
+            }
+        }
+
+        // Вспомогательные функции
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function logout() {
+            if (confirm("Выйти из системы?")) {
+                alert("Вы вышли из системы");
+                // window.location.href = "login.html";
+            }
+        }
+    </script>
+</body>
+</html>

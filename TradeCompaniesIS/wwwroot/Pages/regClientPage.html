@@ -1,0 +1,996 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация клиента</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #475569;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231e293b"/><path d="M20,20 L80,20 L80,80 L20,80 Z" stroke="%23334155" stroke-width="2" fill="none"/></svg>');
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+            .header h1 {
+                font-size: 32px;
+                font-weight: 700;
+                margin-bottom: 10px;
+                background: linear-gradient(135deg, var(--accent), #8b5cf6);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .header p {
+                color: var(--text-secondary);
+                font-size: 16px;
+            }
+
+        .registration-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .section-title i {
+                font-size: 20px;
+            }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                color: var(--text-primary);
+                font-weight: 500;
+                font-size: 14px;
+            }
+
+                .form-group label.required::after {
+                    content: " *";
+                    color: var(--danger);
+                }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                width: 100%;
+                padding: 14px 16px;
+                background: var(--bg-card);
+                border: 2px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-primary);
+                font-size: 15px;
+                transition: all 0.3s;
+            }
+
+                .form-group input:focus,
+                .form-group select:focus,
+                .form-group textarea:focus {
+                    outline: none;
+                    border-color: var(--accent);
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                }
+
+                .form-group input.error,
+                .form-group select.error,
+                .form-group textarea.error {
+                    border-color: var(--danger);
+                }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .hint {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .phone-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .country-code {
+            padding: 14px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .phone-number {
+            flex: 1;
+        }
+
+        .password-strength {
+            margin-top: 10px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .strength-weak {
+            background: var(--danger);
+            width: 33%;
+        }
+
+        .strength-medium {
+            background: var(--warning);
+            width: 66%;
+        }
+
+        .strength-strong {
+            background: var(--success);
+            width: 100%;
+        }
+
+        .terms-container {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            border: 1px solid var(--border);
+        }
+
+        .terms-text {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+
+            .terms-text::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .terms-text::-webkit-scrollbar-track {
+                background: var(--bg-secondary);
+                border-radius: 3px;
+            }
+
+            .terms-text::-webkit-scrollbar-thumb {
+                background: var(--border);
+                border-radius: 3px;
+            }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+            .checkbox-group input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                margin-top: 3px;
+            }
+
+            .checkbox-group label {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+
+                .checkbox-group label a {
+                    color: var(--accent);
+                    text-decoration: none;
+                }
+
+                    .checkbox-group label a:hover {
+                        text-decoration: underline;
+                    }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: var(--accent-hover);
+                transform: translateY(-2px);
+            }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+            .btn-secondary:hover {
+                background: var(--border);
+            }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: var(--success);
+            margin-bottom: 20px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+            .login-link a {
+                color: var(--accent);
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+                .login-link a:hover {
+                    text-decoration: underline;
+                }
+
+        @media (max-width: 768px) {
+            .registration-card {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Регистрация клиента</h1>
+            <p>Создайте аккаунт для доступа к системе управления заказами</p>
+        </div>
+
+        <div class="registration-card">
+            <form id="registrationForm">
+                <!-- Личная информация (таблица Клиент) -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i>👤</i> Личная информация
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="lastName" class="required">Фамилия</label>
+                            <input type="text"
+                                   id="lastName"
+                                   name="lastName"
+                                   placeholder="Иванов"
+                                   required
+                                   autocomplete="family-name">
+                            <div class="error-message" id="lastNameError">
+                                Пожалуйста, введите фамилию
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="firstName" class="required">Имя</label>
+                            <input type="text"
+                                   id="firstName"
+                                   name="firstName"
+                                   placeholder="Иван"
+                                   required
+                                   autocomplete="given-name">
+                            <div class="error-message" id="firstNameError">
+                                Пожалуйста, введите имя
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="middleName">Отчество</label>
+                            <input type="text"
+                                   id="middleName"
+                                   name="middleName"
+                                   placeholder="Иванович"
+                                   autocomplete="additional-name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="birthDate" class="required">Дата рождения</label>
+                            <input type="date"
+                                   id="birthDate"
+                                   name="birthDate"
+                                   required
+                                   max="2006-01-01"
+                                   min="1900-01-01">
+                            <div class="error-message" id="birthDateError">
+                                Укажите корректную дату рождения
+                            </div>
+                            <div class="hint">Должны быть старше 18 лет</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Контактная информация (таблица Клиент) -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i>📱</i> Контактная информация
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="phone" class="required">Номер телефона</label>
+                            <div class="phone-input">
+                                <div class="country-code" id="countryCode">+7</div>
+                                <input type="tel"
+                                       class="phone-number"
+                                       id="phone"
+                                       name="phone"
+                                       placeholder="912 345 67 89"
+                                       required
+                                       pattern="[0-9\s\-\(\)]+"
+                                       autocomplete="tel">
+                            </div>
+                            <div class="error-message" id="phoneError">
+                                Введите корректный номер телефона
+                            </div>
+                            <div class="hint">Телефон будет зашифрован для вашей безопасности</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="required">Email адрес</label>
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   placeholder="ivanov@example.com"
+                                   required
+                                   autocomplete="email">
+                            <div class="error-message" id="emailError">
+                                Введите корректный email адрес
+                            </div>
+                            <div class="hint">Email будет зашифрован для вашей безопасности</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Адрес и страна (таблицы Клиент и Страна) -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i>📍</i> Адрес и местоположение
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="country" class="required">Страна</label>
+                            <select id="country" name="country" required>
+                                <option value="">Выберите страну...</option>
+                                <option value="1">Россия</option>
+                                <option value="2">США</option>
+                                <option value="3">Китай</option>
+                                <option value="4">Германия</option>
+                                <option value="5">Франция</option>
+                                <option value="6">Италия</option>
+                                <option value="7">Испания</option>
+                                <option value="8">Бразилия</option>
+                                <option value="9">Индия</option>
+                                <option value="10">Япония</option>
+                            </select>
+                            <div class="error-message" id="countryError">
+                                Пожалуйста, выберите страну
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address" class="required">Адрес</label>
+                            <textarea id="address"
+                                      name="address"
+                                      rows="3"
+                                      placeholder="Улица, дом, квартира, город, индекс"
+                                      required></textarea>
+                            <div class="error-message" id="addressError">
+                                Пожалуйста, введите адрес
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Учетные данные (таблица login) -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i>🔐</i> Учетные данные
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="username" class="required">Логин</label>
+                            <input type="text"
+                                   id="username"
+                                   name="username"
+                                   placeholder="ivanov_user"
+                                   required
+                                   autocomplete="username"
+                                   minlength="3"
+                                   maxlength="50">
+                            <div class="error-message" id="usernameError">
+                                Логин должен содержать от 3 до 50 символов
+                            </div>
+                            <div class="hint">Будет использоваться для входа в систему</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password" class="required">Пароль</label>
+                            <input type="password"
+                                   id="password"
+                                   name="password"
+                                   placeholder="••••••••"
+                                   required
+                                   autocomplete="new-password"
+                                   minlength="8">
+                            <div class="error-message" id="passwordError">
+                                Пароль должен содержать минимум 8 символов
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-bar" id="passwordStrength"></div>
+                            </div>
+                            <div class="hint">Минимум 8 символов, включая буквы и цифры</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword" class="required">Подтверждение пароля</label>
+                            <input type="password"
+                                   id="confirmPassword"
+                                   name="confirmPassword"
+                                   placeholder="••••••••"
+                                   required
+                                   autocomplete="new-password">
+                            <div class="error-message" id="confirmPasswordError">
+                                Пароли не совпадают
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Соглашения -->
+                <div class="terms-container">
+                    <div class="section-title">
+                        <i>📄</i> Соглашения
+                    </div>
+
+                    <div class="terms-text">
+                        <p><strong>Пользовательское соглашение</strong></p>
+                        <p>Регистрируясь в системе, вы соглашаетесь с условиями:</p>
+                        <ul>
+                            <li>Ваши персональные данные (телефон и email) будут зашифрованы для защиты</li>
+                            <li>Вы получите роль "Клиент" с ограниченными правами доступа</li>
+                            <li>Будет создана учетная запись в системе управления складом</li>
+                            <li>Вы сможете просматривать только свои заказы и данные</li>
+                            <li>Администратор системы имеет право на обработку ваших данных</li>
+                        </ul>
+                        <p>В соответствии с таблицей <code>Клиент</code> будут сохранены:</p>
+                        <ul>
+                            <li>ФИО и дата рождения</li>
+                            <li>Зашифрованные телефон и email</li>
+                            <li>Страна и адрес</li>
+                        </ul>
+                        <p>В таблице <code>login</code> будет создана запись с вашим логином и хешированным паролем.</p>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                        <label for="agreeTerms">
+                            Я прочитал и согласен с условиями пользовательского соглашения
+                        </label>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="agreePrivacy" name="agreePrivacy" required>
+                        <label for="agreePrivacy">
+                            Я согласен на обработку персональных данных в соответствии с политикой конфиденциальности
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Форма скрыта при успешной регистрации -->
+                <div class="form-actions" id="formActions">
+                    <button type="submit" class="btn btn-primary">
+                        Зарегистрироваться
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                        Очистить форму
+                    </button>
+                </div>
+
+                <!-- Индикатор загрузки -->
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Регистрация клиента...</p>
+                    <p class="hint">Создание записи в таблице Клиент и генерация login...</p>
+                </div>
+
+                <!-- Сообщение об успехе -->
+                <div class="success-message" id="successMessage">
+                    <div class="success-icon">✓</div>
+                    <h3>Регистрация успешно завершена!</h3>
+                    <p>Клиент зарегистрирован в системе</p>
+                    <div class="terms-container" style="margin: 20px 0; text-align: left;">
+                        <p><strong>Созданы записи:</strong></p>
+                        <ul>
+                            <li>В таблице <strong>Клиент</strong> с ID: <span id="clientId">-</span></li>
+                            <li>В таблице <strong>login</strong> с логином: <span id="loginUsername">-</span></li>
+                            <li>Данные телефона и email зашифрованы</li>
+                            <li>Пароль хеширован с солью</li>
+                            <li>Назначена роль "Клиент"</li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="goToLogin()">
+                        Перейти к входу
+                    </button>
+                </div>
+            </form>
+
+            <div class="login-link">
+                Уже есть аккаунт? <a href="login.html">Войдите в систему</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Данные для проверки существующих логинов (имитация БД)
+        const existingUsers = ['admin', 'merchandiser', 'client', 'ivanov_user'];
+
+        // Страны из таблицы Страна
+        const countries = [
+            { id: 1, name: 'Россия', code: '+7' },
+            { id: 2, name: 'США', code: '+1' },
+            { id: 3, name: 'Китай', code: '+86' },
+            { id: 4, name: 'Германия', code: '+49' },
+            { id: 5, name: 'Франция', code: '+33' },
+            { id: 6, name: 'Италия', code: '+39' },
+            { id: 7, name: 'Испания', code: '+34' },
+            { id: 8, name: 'Бразилия', code: '+55' },
+            { id: 9, name: 'Индия', code: '+91' },
+            { id: 10, name: 'Япония', code: '+81' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registrationForm');
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('successMessage');
+            const formActions = document.getElementById('formActions');
+
+            // Изменение страны - обновление телефонного кода
+            document.getElementById('country').addEventListener('change', function() {
+                const countryId = parseInt(this.value);
+                const country = countries.find(c => c.id === countryId);
+                if (country) {
+                    document.getElementById('countryCode').textContent = country.code;
+                }
+            });
+
+            // Проверка сложности пароля
+            document.getElementById('password').addEventListener('input', function() {
+                checkPasswordStrength(this.value);
+            });
+
+            // Проверка совпадения паролей
+            document.getElementById('confirmPassword').addEventListener('input', function() {
+                validatePasswordMatch();
+            });
+
+            // Проверка уникальности логина
+            document.getElementById('username').addEventListener('blur', function() {
+                validateUsername(this.value);
+            });
+
+            // Проверка email
+            document.getElementById('email').addEventListener('blur', function() {
+                validateEmail(this.value);
+            });
+
+            // Проверка телефона
+            document.getElementById('phone').addEventListener('blur', function() {
+                validatePhone(this.value);
+            });
+
+            // Отправка формы
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                if (validateForm()) {
+                    // Показываем индикатор загрузки
+                    formActions.style.display = 'none';
+                    loading.style.display = 'block';
+
+                    // Имитация задержки сети и обработки
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    // Регистрируем пользователя
+                    const registrationResult = registerClient();
+
+                    // Скрываем индикатор загрузки
+                    loading.style.display = 'none';
+
+                    if (registrationResult.success) {
+                        // Показываем сообщение об успехе
+                        form.style.display = 'none';
+                        successMessage.style.display = 'block';
+
+                        // Заполняем информацию об успешной регистрации
+                        document.getElementById('clientId').textContent = registrationResult.clientId;
+                        document.getElementById('loginUsername').textContent =
+                            document.getElementById('username').value;
+                    }
+                }
+            });
+        });
+
+        // Проверка сложности пароля
+        function checkPasswordStrength(password) {
+            const strengthBar = document.getElementById('passwordStrength');
+            let strength = 0;
+
+            // Проверяем длину
+            if (password.length >= 8) strength++;
+
+            // Проверяем наличие цифр
+            if (/\d/.test(password)) strength++;
+
+            // Проверяем наличие букв в разных регистрах
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+
+            // Проверяем наличие специальных символов
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+            // Обновляем индикатор
+            strengthBar.className = 'strength-bar';
+            if (password.length === 0) {
+                strengthBar.style.width = '0%';
+            } else {
+                switch(strength) {
+                    case 1:
+                        strengthBar.classList.add('strength-weak');
+                        break;
+                    case 2:
+                    case 3:
+                        strengthBar.classList.add('strength-medium');
+                        break;
+                    case 4:
+                        strengthBar.classList.add('strength-strong');
+                        break;
+                }
+            }
+        }
+
+        // Проверка совпадения паролей
+        function validatePasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorElement = document.getElementById('confirmPasswordError');
+
+            if (password && confirmPassword && password !== confirmPassword) {
+                showError('confirmPassword', 'Пароли не совпадают');
+                return false;
+            } else {
+                hideError('confirmPassword');
+                return true;
+            }
+        }
+
+        // Проверка уникальности логина
+        function validateUsername(username) {
+            const errorElement = document.getElementById('usernameError');
+
+            if (username.length < 3) {
+                showError('username', 'Логин должен содержать минимум 3 символа');
+                return false;
+            }
+
+            if (existingUsers.includes(username)) {
+                showError('username', 'Этот логин уже занят');
+                return false;
+            }
+
+            hideError('username');
+            return true;
+        }
+
+        // Проверка email
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(email)) {
+                showError('email', 'Введите корректный email адрес');
+                return false;
+            }
+
+            hideError('email');
+            return true;
+        }
+
+        // Проверка телефона
+        function validatePhone(phone) {
+            // Удаляем все нецифровые символы
+            const cleanedPhone = phone.replace(/\D/g, '');
+
+            if (cleanedPhone.length < 10) {
+                showError('phone', 'Номер телефона слишком короткий');
+                return false;
+            }
+
+            hideError('phone');
+            return true;
+        }
+
+        // Валидация всей формы
+        function validateForm() {
+            let isValid = true;
+
+            // Проверяем обязательные поля
+            const requiredFields = ['lastName', 'firstName', 'birthDate', 'phone',
+                                  'email', 'country', 'address', 'username',
+                                  'password', 'confirmPassword'];
+
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    showError(fieldId, 'Это поле обязательно для заполнения');
+                    isValid = false;
+                }
+            });
+
+            // Проверяем дату рождения
+            const birthDate = new Date(document.getElementById('birthDate').value);
+            const today = new Date();
+            const minDate = new Date();
+            minDate.setFullYear(today.getFullYear() - 18);
+
+            if (birthDate > minDate) {
+                showError('birthDate', 'Вы должны быть старше 18 лет');
+                isValid = false;
+            }
+
+            // Проверяем соглашения
+            if (!document.getElementById('agreeTerms').checked ||
+                !document.getElementById('agreePrivacy').checked) {
+                alert('Необходимо принять все соглашения');
+                isValid = false;
+            }
+
+            // Проверяем дополнительные валидации
+            if (!validateUsername(document.getElementById('username').value)) isValid = false;
+            if (!validateEmail(document.getElementById('email').value)) isValid = false;
+            if (!validatePhone(document.getElementById('phone').value)) isValid = false;
+            if (!validatePasswordMatch()) isValid = false;
+
+            return isValid;
+        }
+
+        // Показать ошибку
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + 'Error');
+
+            field.classList.add('error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        // Скрыть ошибку
+        function hideError(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + 'Error');
+
+            field.classList.remove('error');
+            errorElement.style.display = 'none';
+        }
+
+        // Сброс формы
+        function resetForm() {
+            if (confirm('Вы уверены, что хотите очистить все поля формы?')) {
+                document.getElementById('registrationForm').reset();
+                document.getElementById('countryCode').textContent = '+7';
+
+                // Сбрасываем все ошибки
+                document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+                document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+                document.getElementById('passwordStrength').className = 'strength-bar';
+                document.getElementById('passwordStrength').style.width = '0%';
+            }
+        }
+
+        // Регистрация клиента (имитация работы с БД)
+        function registerClient() {
+            // Получаем данные из формы
+            const formData = {
+                // Данные для таблицы Клиент
+                lastName: document.getElementById('lastName').value,
+                firstName: document.getElementById('firstName').value,
+                middleName: document.getElementById('middleName').value,
+                birthDate: document.getElementById('birthDate').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                countryId: document.getElementById('country').value,
+                countryName: document.getElementById('country').options[document.getElementById('country').selectedIndex].text,
+                address: document.getElementById('address').value,
+
+                // Данные для таблицы login
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+
+            // Имитация шифрования данных (как в реальной системе)
+            const encryptedPhone = encryptData(formData.phone);
+            const encryptedEmail = encryptData(formData.email);
+
+            // Имитация хеширования пароля (как в реальной системе)
+            const hashedPassword = hashPassword(formData.password);
+
+            // Генерация ID клиента (имитация автоинкремента)
+            const clientId = Math.floor(Math.random() * 1000) + 100;
+
+            console.log('=== РЕГИСТРАЦИЯ КЛИЕНТА ===');
+            console.log('1. Создание записи в таблице Клиент:');
+            console.log('   ID клиента:', clientId);
+            console.log('   ФИО:', `${formData.lastName} ${formData.firstName} ${formData.middleName}`);
+            console.log('   Дата рождения:', formData.birthDate);
+            console.log('   Телефон (зашифрован):', encryptedPhone);
+            console.log('   Email (зашифрован):', encryptedEmail);
+            console.log('   Страна ID:', formData.countryId);
+            console.log('   Адрес:', formData.address);
+            console.log('');
+            console.log('2. Создание записи в таблице login:');
+            console.log('   Логин:', formData.username);
+            console.log('   Пароль (хеширован):', hashedPassword.substring(0, 50) + '...');
+            console.log('   ID клиента:', clientId);
+            console.log('');
+            console.log('3. Назначение роли "Клиент"');
+            console.log('4. Генерация ключей шифрования для клиента');
+
+            return {
+                success: true,
+                clientId: clientId
+            };
+        }
+
+        // Имитация шифрования (как в реальной системе через pgp_sym_encrypt)
+        function encryptData(data) {
+            // В реальной системе здесь будет PGP шифрование
+            return 'ENCRYPTED:' + btoa(data).substring(0, 30) + '...';
+        }
+
+        // Имитация хеширования пароля (как в реальной системе)
+        function hashPassword(password) {
+            // В реальной системе здесь будет хеширование с солью
+            const salt = Math.random().toString(36).substring(2, 15);
+            const hash = btoa(password + salt).substring(0, 64);
+            return salt + ':' + hash;
+        }
+
+        // Переход к странице входа
+        function goToLogin() {
+            // В реальной системе здесь будет редирект
+            alert('Переход к странице входа (login.html)');
+            // window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

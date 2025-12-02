@@ -1,0 +1,1387 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет клиента</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #475569;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-role {
+            background: var(--accent);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+            .logout-btn:hover {
+                background: var(--danger);
+                border-color: var(--danger);
+            }
+
+        /* Main container */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 73px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 30px 0;
+        }
+
+        .nav-item {
+            padding: 16px 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+            .nav-item:hover {
+                background: var(--bg-card);
+            }
+
+            .nav-item.active {
+                background: var(--bg-card);
+                border-left-color: var(--accent);
+                color: var(--accent);
+            }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .page {
+            display: none;
+        }
+
+            .page.active {
+                display: block;
+            }
+
+        .page-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        /* Profile card */
+        .profile-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .edit-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+            .edit-btn:hover {
+                background: var(--accent-hover);
+            }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .profile-field {
+            margin-bottom: 15px;
+        }
+
+        .profile-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .profile-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Edit form */
+        .edit-form {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                color: var(--text-primary);
+                font-weight: 500;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                width: 100%;
+                padding: 12px 16px;
+                background: var(--bg-secondary);
+                border: 2px solid var(--border);
+                border-radius: 8px;
+                color: var(--text-primary);
+                font-size: 15px;
+            }
+
+                .form-group input:focus,
+                .form-group select:focus,
+                .form-group textarea:focus {
+                    outline: none;
+                    border-color: var(--accent);
+                }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .save-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+        }
+
+        /* Orders table */
+        .table-container {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-delivered {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .status-processing {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent);
+        }
+
+        .action-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* Product search */
+        .search-container {
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+
+        .search-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            min-width: 150px;
+        }
+
+        /* Product grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: transform 0.3s;
+        }
+
+            .product-card:hover {
+                transform: translateY(-5px);
+            }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .product-price {
+            font-size: 20px;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .product-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .product-stock {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .stock-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .stock-available {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .stock-low {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .stock-out {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .order-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+            .order-btn:hover {
+                background: #0da271;
+            }
+
+            .order-btn:disabled {
+                background: var(--border);
+                cursor: not-allowed;
+            }
+
+        /* New order form */
+        .new-order-form {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .order-items {
+            margin: 20px 0;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .remove-item {
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .total {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: right;
+            margin-top: 20px;
+            color: var(--accent);
+        }
+
+        /* Availability check */
+        .availability-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .availability-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            📦 Личный кабинет
+        </div>
+        <div class="user-info">
+            <span class="user-role">Клиент</span>
+            <button class="logout-btn" onclick="logout()">Выйти</button>
+        </div>
+    </div>
+
+    <!-- Main container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="nav-item active" data-page="profile">
+                👤 Мой профиль
+            </div>
+            <div class="nav-item" data-page="orders">
+                📦 Мои заказы
+            </div>
+            <div class="nav-item" data-page="new-order">
+                🛒 Новый заказ
+            </div>
+            <div class="nav-item" data-page="search">
+                🔍 Поиск товаров
+            </div>
+            <div class="nav-item" data-page="availability">
+                📊 Наличие товаров
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Страница профиля -->
+            <div class="page active" id="profile-page">
+                <h1 class="page-title">Мой профиль</h1>
+                <p class="page-subtitle">Ваши личные данные и контактная информация</p>
+
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <h2>Личная информация</h2>
+                        <button class="edit-btn" onclick="toggleEditProfile()">Редактировать</button>
+                    </div>
+
+                    <div class="profile-view">
+                        <div class="profile-grid">
+                            <div class="profile-field">
+                                <div class="profile-label">ФИО</div>
+                                <div class="profile-value" id="profile-name">Иванов Иван Иванович</div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="profile-label">Дата рождения</div>
+                                <div class="profile-value" id="profile-birthdate">15.05.1970</div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="profile-label">Телефон</div>
+                                <div class="profile-value" id="profile-phone">+7 912 345 67 89</div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="profile-label">Email</div>
+                                <div class="profile-value" id="profile-email">ivanov@example.com</div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="profile-label">Страна</div>
+                                <div class="profile-value" id="profile-country">Россия</div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="profile-label">Адрес</div>
+                                <div class="profile-value" id="profile-address">Москва, ул. Ленина, д. 1</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="edit-form" id="edit-profile-form">
+                        <div class="form-group">
+                            <label>Фамилия</label>
+                            <input type="text" id="edit-lastname" value="Иванов">
+                        </div>
+                        <div class="form-group">
+                            <label>Имя</label>
+                            <input type="text" id="edit-firstname" value="Иван">
+                        </div>
+                        <div class="form-group">
+                            <label>Отчество</label>
+                            <input type="text" id="edit-middlename" value="Иванович">
+                        </div>
+                        <div class="form-group">
+                            <label>Дата рождения</label>
+                            <input type="date" id="edit-birthdate" value="1970-05-15">
+                        </div>
+                        <div class="form-group">
+                            <label>Телефон</label>
+                            <input type="tel" id="edit-phone" value="+79123456789">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="edit-email" value="ivanov@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Страна</label>
+                            <select id="edit-country">
+                                <option value="1">Россия</option>
+                                <option value="2">США</option>
+                                <option value="3">Китай</option>
+                                <option value="4">Германия</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Адрес</label>
+                            <textarea id="edit-address" rows="2">Москва, ул. Ленина, д. 1</textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button class="save-btn" onclick="saveProfile()">Сохранить</button>
+                            <button class="cancel-btn" onclick="toggleEditProfile()">Отмена</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Страница заказов -->
+            <div class="page" id="orders-page">
+                <h1 class="page-title">Мои заказы</h1>
+                <p class="page-subtitle">История всех ваших заказов</p>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>№ заказа</th>
+                                <th>Дата</th>
+                                <th>Товары</th>
+                                <th>Сумма</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <!-- Заполняется через JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Страница нового заказа -->
+            <div class="page" id="new-order-page">
+                <h1 class="page-title">Новый заказ</h1>
+                <p class="page-subtitle">Сформируйте новый заказ из доступных товаров</p>
+
+                <div class="search-box">
+                    <input type="text" class="search-input" id="order-search" placeholder="Поиск товара по названию...">
+                    <button class="search-btn" onclick="searchProductsForOrder()">Найти</button>
+                </div>
+
+                <div class="new-order-form">
+                    <h3>Товары в заказе</h3>
+                    <div class="order-items" id="order-items-container">
+                        <!-- Товары добавляются здесь -->
+                        <div class="loading">Выберите товары для заказа</div>
+                    </div>
+
+                    <div class="total">
+                        Итого: <span id="order-total">0</span> ₽
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="save-btn" onclick="submitOrder()">Оформить заказ</button>
+                        <button class="cancel-btn" onclick="clearOrder()">Очистить</button>
+                    </div>
+                </div>
+
+                <div class="products-grid" id="order-products-grid">
+                    <!-- Товары для выбора -->
+                </div>
+            </div>
+
+            <!-- Страница поиска товаров -->
+            <div class="page" id="search-page">
+                <h1 class="page-title">Поиск товаров</h1>
+                <p class="page-subtitle">Найдите нужные товары по названию или описанию</p>
+
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" class="search-input" id="product-search" placeholder="Введите название товара...">
+                        <button class="search-btn" onclick="searchProducts()">Искать</button>
+                    </div>
+
+                    <div class="filters">
+                        <select class="filter-select" id="category-filter">
+                            <option value="">Все категории</option>
+                            <option value="equipment">Оборудование</option>
+                            <option value="tools">Инструменты</option>
+                            <option value="materials">Материалы</option>
+                        </select>
+
+                        <select class="filter-select" id="price-filter">
+                            <option value="">Любая цена</option>
+                            <option value="0-10000">До 10 000 ₽</option>
+                            <option value="10000-50000">10 000 - 50 000 ₽</option>
+                            <option value="50000+">От 50 000 ₽</option>
+                        </select>
+
+                        <select class="filter-select" id="stock-filter">
+                            <option value="">Любое наличие</option>
+                            <option value="available">Есть в наличии</option>
+                            <option value="low">Мало осталось</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="products-grid" id="search-results">
+                    <!-- Результаты поиска -->
+                </div>
+            </div>
+
+            <!-- Страница наличия товаров -->
+            <div class="page" id="availability-page">
+                <h1 class="page-title">Наличие товаров</h1>
+                <p class="page-subtitle">Проверьте наличие и сроки поставки товаров</p>
+
+                <div class="search-box">
+                    <input type="text" class="search-input" id="availability-search" placeholder="Введите ID товара или название...">
+                    <button class="search-btn" onclick="checkAvailability()">Проверить</button>
+                </div>
+
+                <div id="availability-results">
+                    <!-- Результаты проверки наличия -->
+                    <div class="loading">Введите ID товара для проверки наличия</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Данные клиента (имитация из БД)
+        const clientData = {
+            id: 1,
+            lastName: "Иванов",
+            firstName: "Иван",
+            middleName: "Иванович",
+            phone: "+7 912 345 67 89",
+            email: "ivanov@example.com",
+            country: "Россия",
+            birthdate: "1970-05-15",
+            address: "Москва, ул. Ленина, д. 1"
+        };
+
+        // Мок-данные товаров
+        const productsData = [
+            {
+                id: 4,
+                name: "Промышленный вентилятор",
+                description: "Вентилятор с высокой производительностью для вентиляции",
+                category: "equipment",
+                price: 25000,
+                stock: 105,
+                markup: 25,
+                minStock: 10
+            },
+            {
+                id: 7,
+                name: "Кран-балка",
+                description: "Кран-балка с грузоподъемностью до 5 тонн",
+                category: "equipment",
+                price: 45000,
+                stock: 95,
+                markup: 40,
+                minStock: 5
+            },
+            {
+                id: 8,
+                name: "Лазерный уровень",
+                description: "Лазерный уровень для точного выравнивания конструкций",
+                category: "tools",
+                price: 15000,
+                stock: 115,
+                markup: 18,
+                minStock: 15
+            },
+            {
+                id: 15,
+                name: "Печь для термообработки",
+                description: "Печь для термообработки металлов, максимальная температура - 1200°C",
+                category: "equipment",
+                price: 120000,
+                stock: 75,
+                markup: 60,
+                minStock: 3
+            }
+        ];
+
+        // Мок-данные заказов
+        const ordersData = [
+            {
+                id: 1,
+                date: "2024-03-15",
+                items: [
+                    { productId: 7, name: "Кран-балка", quantity: 1, price: 45000 }
+                ],
+                total: 45000,
+                status: "delivered"
+            },
+            {
+                id: 2,
+                date: "2024-03-18",
+                items: [
+                    { productId: 4, name: "Промышленный вентилятор", quantity: 2, price: 25000 },
+                    { productId: 8, name: "Лазерный уровень", quantity: 1, price: 15000 }
+                ],
+                total: 65000,
+                status: "processing"
+            }
+        ];
+
+        // Текущий заказ
+        let currentOrder = {
+            items: [],
+            total: 0
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация профиля
+            initializeProfile();
+
+            // Инициализация заказов
+            initializeOrders();
+
+            // Инициализация навигации
+            initializeNavigation();
+
+            // Инициализация поиска товаров
+            initializeProductSearch();
+
+            // Загрузка товаров для нового заказа
+            loadProductsForOrder();
+        });
+
+        // Функция выхода
+        function logout() {
+            if (confirm("Вы уверены, что хотите выйти?")) {
+                // В реальной системе здесь будет редирект на страницу входа
+                alert("Вы вышли из системы");
+                // window.location.href = "login.html";
+            }
+        }
+
+        // Навигация по страницам
+        function initializeNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Убираем активный класс у всех
+                    navItems.forEach(i => i.classList.remove('active'));
+
+                    // Добавляем активный класс текущему
+                    this.classList.add('active');
+
+                    // Получаем ID страницы
+                    const pageId = this.getAttribute('data-page');
+
+                    // Скрываем все страницы
+                    document.querySelectorAll('.page').forEach(page => {
+                        page.classList.remove('active');
+                    });
+
+                    // Показываем выбранную страницу
+                    document.getElementById(pageId + '-page').classList.add('active');
+                });
+            });
+        }
+
+        // 1. Просмотр своих данных
+        function initializeProfile() {
+            document.getElementById('profile-name').textContent =
+                `${clientData.lastName} ${clientData.firstName} ${clientData.middleName}`;
+            document.getElementById('profile-birthdate').textContent = formatDate(clientData.birthdate);
+            document.getElementById('profile-phone').textContent = clientData.phone;
+            document.getElementById('profile-email').textContent = clientData.email;
+            document.getElementById('profile-country').textContent = clientData.country;
+            document.getElementById('profile-address').textContent = clientData.address;
+
+            // Заполняем форму редактирования
+            document.getElementById('edit-lastname').value = clientData.lastName;
+            document.getElementById('edit-firstname').value = clientData.firstName;
+            document.getElementById('edit-middlename').value = clientData.middleName;
+            document.getElementById('edit-birthdate').value = clientData.birthdate;
+            document.getElementById('edit-phone').value = clientData.phone;
+            document.getElementById('edit-email').value = clientData.email;
+            document.getElementById('edit-address').value = clientData.address;
+        }
+
+        // 2. Редактирование профиля
+        function toggleEditProfile() {
+            const profileView = document.querySelector('.profile-view');
+            const editForm = document.getElementById('edit-profile-form');
+            const editBtn = document.querySelector('.edit-btn');
+
+            if (editForm.style.display === 'block') {
+                profileView.style.display = 'block';
+                editForm.style.display = 'none';
+                editBtn.textContent = 'Редактировать';
+            } else {
+                profileView.style.display = 'none';
+                editForm.style.display = 'block';
+                editBtn.textContent = 'Скрыть';
+            }
+        }
+
+        function saveProfile() {
+            // В реальной системе здесь будет AJAX-запрос к серверу
+            const newData = {
+                lastName: document.getElementById('edit-lastname').value,
+                firstName: document.getElementById('edit-firstname').value,
+                middleName: document.getElementById('edit-middlename').value,
+                birthdate: document.getElementById('edit-birthdate').value,
+                phone: document.getElementById('edit-phone').value,
+                email: document.getElementById('edit-email').value,
+                country: document.getElementById('edit-country').options[document.getElementById('edit-country').selectedIndex].text,
+                address: document.getElementById('edit-address').value
+            };
+
+            // Обновляем данные
+            Object.assign(clientData, newData);
+
+            // Обновляем отображение
+            initializeProfile();
+
+            // Скрываем форму
+            toggleEditProfile();
+
+            alert('Изменения сохранены успешно!');
+        }
+
+        // 3. Просмотр истории заказов
+        function initializeOrders() {
+            const tbody = document.getElementById('orders-table-body');
+            tbody.innerHTML = '';
+
+            ordersData.forEach(order => {
+                const row = document.createElement('tr');
+
+                // Форматируем список товаров
+                const itemsList = order.items.map(item =>
+                    `${item.name} (${item.quantity} шт.)`
+                ).join(', ');
+
+                // Определяем статус
+                let statusText, statusClass;
+                switch(order.status) {
+                    case 'delivered':
+                        statusText = 'Доставлен';
+                        statusClass = 'status-delivered';
+                        break;
+                    case 'processing':
+                        statusText = 'В обработке';
+                        statusClass = 'status-processing';
+                        break;
+                    case 'pending':
+                        statusText = 'Ожидает';
+                        statusClass = 'status-pending';
+                        break;
+                    default:
+                        statusText = 'Неизвестно';
+                        statusClass = 'status-pending';
+                }
+
+                row.innerHTML = `
+                    <td>#${order.id.toString().padStart(5, '0')}</td>
+                    <td>${formatDate(order.date)}</td>
+                    <td>${itemsList}</td>
+                    <td>${formatCurrency(order.total)}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="action-btn" onclick="repeatOrder(${order.id})">
+                            Повторить
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function repeatOrder(orderId) {
+            const order = ordersData.find(o => o.id === orderId);
+            if (order) {
+                // Переходим на страницу нового заказа
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelector('.nav-item[data-page="new-order"]').classList.add('active');
+
+                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                document.getElementById('new-order-page').classList.add('active');
+
+                // Добавляем товары в текущий заказ
+                currentOrder.items = [...order.items];
+                updateOrderDisplay();
+
+                alert(`Заказ #${orderId} добавлен для повторения`);
+            }
+        }
+
+        // 4. Создание нового заказа
+        function loadProductsForOrder() {
+            const container = document.getElementById('order-products-grid');
+            container.innerHTML = '';
+
+            productsData.forEach(product => {
+                const card = createProductCard(product, true);
+                container.appendChild(card);
+            });
+        }
+
+        function searchProductsForOrder() {
+            const searchTerm = document.getElementById('order-search').value.toLowerCase();
+            const container = document.getElementById('order-products-grid');
+
+            if (!searchTerm) {
+                loadProductsForOrder();
+                return;
+            }
+
+            container.innerHTML = '';
+
+            const filteredProducts = productsData.filter(product =>
+                product.name.toLowerCase().includes(searchTerm) ||
+                product.description.toLowerCase().includes(searchTerm)
+            );
+
+            if (filteredProducts.length === 0) {
+                container.innerHTML = '<div class="loading">Товары не найдены</div>';
+                return;
+            }
+
+            filteredProducts.forEach(product => {
+                const card = createProductCard(product, true);
+                container.appendChild(card);
+            });
+        }
+
+        function addToOrder(productId, quantity = 1) {
+            const product = productsData.find(p => p.id === productId);
+            if (!product) return;
+
+            // Проверяем, есть ли уже такой товар в заказе
+            const existingItem = currentOrder.items.find(item => item.productId === productId);
+
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                currentOrder.items.push({
+                    productId: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: quantity
+                });
+            }
+
+            updateOrderDisplay();
+        }
+
+        function removeFromOrder(productId) {
+            currentOrder.items = currentOrder.items.filter(item => item.productId !== productId);
+            updateOrderDisplay();
+        }
+
+        function updateOrderDisplay() {
+            const container = document.getElementById('order-items-container');
+            const totalElement = document.getElementById('order-total');
+
+            if (currentOrder.items.length === 0) {
+                container.innerHTML = '<div class="loading">Выберите товары для заказа</div>';
+                totalElement.textContent = '0';
+                return;
+            }
+
+            // Рассчитываем общую сумму
+            let total = 0;
+
+            container.innerHTML = '';
+
+            currentOrder.items.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+
+                const itemElement = document.createElement('div');
+                itemElement.className = 'order-item';
+                itemElement.innerHTML = `
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        <small>${formatCurrency(item.price)} × ${item.quantity} шт.</small>
+                    </div>
+                    <div>
+                        <strong>${formatCurrency(itemTotal)}</strong>
+                        <span class="remove-item" onclick="removeFromOrder(${item.productId})">×</span>
+                    </div>
+                `;
+
+                container.appendChild(itemElement);
+            });
+
+            totalElement.textContent = formatCurrency(total);
+        }
+
+        function submitOrder() {
+            if (currentOrder.items.length === 0) {
+                alert('Добавьте товары в заказ');
+                return;
+            }
+
+            // В реальной системе здесь будет AJAX-запрос к серверу
+            const newOrder = {
+                id: ordersData.length + 1,
+                date: new Date().toISOString().split('T')[0],
+                items: [...currentOrder.items],
+                total: currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                status: 'pending'
+            };
+
+            ordersData.unshift(newOrder);
+
+            // Обновляем список заказов
+            initializeOrders();
+
+            // Очищаем текущий заказ
+            clearOrder();
+
+            alert(`Заказ #${newOrder.id} успешно оформлен!`);
+        }
+
+        function clearOrder() {
+            currentOrder.items = [];
+            updateOrderDisplay();
+        }
+
+        // 8. Проверка наличия товара
+        function checkAvailability() {
+            const searchValue = document.getElementById('availability-search').value.trim();
+            const resultsContainer = document.getElementById('availability-results');
+
+            if (!searchValue) {
+                resultsContainer.innerHTML = '<div class="loading">Введите ID товара или название для проверки</div>';
+                return;
+            }
+
+            let product;
+
+            // Проверяем, введен ли ID (число)
+            if (!isNaN(searchValue)) {
+                product = productsData.find(p => p.id === parseInt(searchValue));
+            } else {
+                // Ищем по названию
+                product = productsData.find(p =>
+                    p.name.toLowerCase().includes(searchValue.toLowerCase())
+                );
+            }
+
+            if (!product) {
+                resultsContainer.innerHTML = '<div class="loading">Товар не найден</div>';
+                return;
+            }
+
+            // Определяем статус наличия
+            let stockStatus, stockClass, deliveryTime;
+
+            if (product.stock > product.minStock * 2) {
+                stockStatus = 'В наличии';
+                stockClass = 'stock-available';
+                deliveryTime = '1-2 дня';
+            } else if (product.stock > 0) {
+                stockStatus = 'Мало осталось';
+                stockClass = 'stock-low';
+                deliveryTime = '3-5 дней';
+            } else {
+                stockStatus = 'Нет в наличии';
+                stockClass = 'stock-out';
+                deliveryTime = 'ожидается поставка';
+            }
+
+            resultsContainer.innerHTML = `
+                <div class="availability-card">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+
+                    <div class="availability-info">
+                        <div>
+                            <div class="profile-label">Текущий остаток</div>
+                            <div class="profile-value">${product.stock} шт.</div>
+                        </div>
+                        <div>
+                            <div class="profile-label">Статус</div>
+                            <div class="profile-value"><span class="stock-badge ${stockClass}">${stockStatus}</span></div>
+                        </div>
+                        <div>
+                            <div class="profile-label">Срок поставки</div>
+                            <div class="profile-value">${deliveryTime}</div>
+                        </div>
+                        <div>
+                            <div class="profile-label">Цена</div>
+                            <div class="profile-value">${formatCurrency(product.price)}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 11. Поиск товаров
+        function initializeProductSearch() {
+            displaySearchResults(productsData);
+        }
+
+        function searchProducts() {
+            const searchTerm = document.getElementById('product-search').value.toLowerCase();
+            const categoryFilter = document.getElementById('category-filter').value;
+            const priceFilter = document.getElementById('price-filter').value;
+            const stockFilter = document.getElementById('stock-filter').value;
+
+            let results = productsData.filter(product => {
+                // Фильтр по поисковому запросу
+                if (searchTerm && !product.name.toLowerCase().includes(searchTerm) &&
+                    !product.description.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+
+                // Фильтр по категории
+                if (categoryFilter && product.category !== categoryFilter) {
+                    return false;
+                }
+
+                // Фильтр по цене
+                if (priceFilter) {
+                    const [min, max] = priceFilter === '50000+' ? [50000, Infinity] : priceFilter.split('-').map(Number);
+                    if (product.price < min || product.price > max) {
+                        return false;
+                    }
+                }
+
+                // Фильтр по наличию
+                if (stockFilter) {
+                    if (stockFilter === 'available' && product.stock <= 0) {
+                        return false;
+                    }
+                    if (stockFilter === 'low' && product.stock > 10) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            displaySearchResults(results);
+        }
+
+        function displaySearchResults(products) {
+            const container = document.getElementById('search-results');
+
+            if (products.length === 0) {
+                container.innerHTML = '<div class="loading">Товары не найдены</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            products.forEach(product => {
+                const card = createProductCard(product, false);
+                container.appendChild(card);
+            });
+        }
+
+        function createProductCard(product, forOrder = false) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+
+            // Определяем статус наличия
+            let stockStatus, stockClass;
+            if (product.stock > 10) {
+                stockStatus = 'В наличии';
+                stockClass = 'stock-available';
+            } else if (product.stock > 0) {
+                stockStatus = `Осталось: ${product.stock} шт.`;
+                stockClass = 'stock-low';
+            } else {
+                stockStatus = 'Нет в наличии';
+                stockClass = 'stock-out';
+            }
+
+            card.innerHTML = `
+                <div class="product-header">
+                    <div>
+                        <div class="product-title">${product.name}</div>
+                        <div class="product-price">${formatCurrency(product.price)}</div>
+                    </div>
+                    <span class="stock-badge ${stockClass}">${stockStatus}</span>
+                </div>
+                <div class="product-description">${product.description}</div>
+                <div class="product-stock">
+                    <div>
+                        <small>ID: ${product.id}</small>
+                    </div>
+                    ${forOrder ? `
+                    <button class="order-btn"
+                            onclick="addToOrder(${product.id})"
+                            ${product.stock === 0 ? 'disabled' : ''}>
+                        Добавить в заказ
+                    </button>
+                    ` : `
+                    <button class="order-btn"
+                            onclick="checkProductAvailability(${product.id})">
+                        Проверить наличие
+                    </button>
+                    `}
+                </div>
+            `;
+
+            return card;
+        }
+
+        function checkProductAvailability(productId) {
+            document.getElementById('availability-search').value = productId;
+            checkAvailability();
+
+            // Переходим на страницу наличия
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelector('.nav-item[data-page="availability"]').classList.add('active');
+
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById('availability-page').classList.add('active');
+        }
+
+        // Вспомогательные функции
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU');
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+    </script>
+</body>
+</html>
