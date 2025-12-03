@@ -7,6 +7,8 @@ namespace TradeCompanyIS.Extensions
         public static IEndpointRouteBuilder MapAllEndpoints(this IEndpointRouteBuilder app)
         {
             app.MapTradeOperationsEndpoints();
+            app.MapLoginEndpoints();
+            app.MapGetEndpoints();
             return app;
         }
     }

@@ -452,9 +452,6 @@
             <div class="nav-item" data-page="supplies">
                 🚚 Поставки
             </div>
-            <div class="nav-item" data-page="prices">
-                💰 Цены
-            </div>
             <div class="nav-item" data-page="suppliers">
                 🏭 Поставщики
             </div>
@@ -564,41 +561,6 @@
                     <div class="form-actions">
                         <button class="btn btn-success" onclick="createSupply()">Создать поставку</button>
                         <button class="btn" onclick="clearSupplyForm()">Очистить</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Цены -->
-            <div class="page" id="prices-page">
-                <h1 class="page-title">Управление ценами</h1>
-                <p class="page-subtitle">Обновление цен товаров</p>
-
-                <div class="form-card">
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Товар</th>
-                                    <th>Текущая цена</th>
-                                    <th>Новая цена</th>
-                                    <th>Изменение</th>
-                                </tr>
-                            </thead>
-                            <tbody id="new-prices-table">
-                                <!-- Заполняется через JS -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="import-prices">Импорт новых цен (JSON)</label>
-                        <textarea id="import-prices" rows="5" placeholder='[{"productName": "Товар 1", "newPrice": 1000}, ...]'></textarea>
-                    </div>
-
-                    <div class="form-actions">
-                        <button class="btn btn-success" onclick="importNewPrices()">Импортировать цены</button>
-                        <button class="btn btn-primary" onclick="updatePrices()">Обновить цены</button>
-                        <button class="btn" onclick="clearNewPrices()">Очистить</button>
                     </div>
                 </div>
             </div>
@@ -763,14 +725,13 @@
             warehouseId: null
         };
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Инициализация навигации
             initializeNavigation();
 
             // Загрузка данных
             loadProducts();
             loadSuppliers();
-            loadPrices();
             loadDeleteProducts();
 
             // Заполнение выпадающих списков
@@ -782,7 +743,7 @@
             const navItems = document.querySelectorAll('.nav-item');
 
             navItems.forEach(item => {
-                item.addEventListener('click', function() {
+                item.addEventListener('click', function () {
                     navItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
 
@@ -818,15 +779,15 @@
             mockData.products.forEach(product => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${product.id}</td>
-                    <td><strong>${product.name}</strong></td>
-                    <td>${product.description}</td>
-                    <td><span class="status-badge status-info">${product.markup}%</span></td>
-                    <td>${product.stock} шт.</td>
-                    <td>
-                        <button class="btn btn-small btn-primary" onclick="editProduct(${product.id})">Изменить</button>
-                    </td>
-                `;
+                        <td>${product.id}</td>
+                        <td><strong>${product.name}</strong></td>
+                        <td>${product.description}</td>
+                        <td><span class="status-badge status-info">${product.markup}%</span></td>
+                        <td>${product.stock} шт.</td>
+                        <td>
+                            <button class="btn btn-small btn-primary" onclick="editProduct(${product.id})">Изменить</button>
+                        </td>
+                    `;
                 tbody.appendChild(row);
             });
         }
@@ -845,15 +806,15 @@
             filtered.forEach(product => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${product.id}</td>
-                    <td><strong>${product.name}</strong></td>
-                    <td>${product.description}</td>
-                    <td><span class="status-badge status-info">${product.markup}%</span></td>
-                    <td>${product.stock} шт.</td>
-                    <td>
-                        <button class="btn btn-small btn-primary" onclick="editProduct(${product.id})">Изменить</button>
-                    </td>
-                `;
+                        <td>${product.id}</td>
+                        <td><strong>${product.name}</strong></td>
+                        <td>${product.description}</td>
+                        <td><span class="status-badge status-info">${product.markup}%</span></td>
+                        <td>${product.stock} шт.</td>
+                        <td>
+                            <button class="btn btn-small btn-primary" onclick="editProduct(${product.id})">Изменить</button>
+                        </td>
+                    `;
                 tbody.appendChild(row);
             });
         }
@@ -982,10 +943,10 @@
 
             if (currentSupply.items.length === 0) {
                 tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="loading">Добавьте товары в поставку</td>
-                    </tr>
-                `;
+                        <tr>
+                            <td colspan="5" class="loading">Добавьте товары в поставку</td>
+                        </tr>
+                    `;
                 return;
             }
 
@@ -993,12 +954,12 @@
                 const total = item.quantity * item.price;
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${item.productName}</td>
-                    <td>${item.quantity} шт.</td>
-                    <td>${formatCurrency(item.price)}</td>
-                    <td>${formatCurrency(total)}</td>
-                    <td><button class="btn btn-small btn-danger" onclick="removeSupplyItem(${index})">×</button></td>
-                `;
+                        <td>${item.productName}</td>
+                        <td>${item.quantity} шт.</td>
+                        <td>${formatCurrency(item.price)}</td>
+                        <td>${formatCurrency(total)}</td>
+                        <td><button class="btn btn-small btn-danger" onclick="removeSupplyItem(${index})">×</button></td>
+                    `;
                 tbody.appendChild(row);
             });
         }
@@ -1054,98 +1015,6 @@
             document.getElementById('supply-warehouse').value = '';
         }
 
-        // 8. Управление ценами
-        function loadPrices() {
-            const tbody = document.getElementById('new-prices-table');
-            tbody.innerHTML = '';
-
-            mockData.newPrices.forEach(price => {
-                const change = ((price.newPrice - price.currentPrice) / price.currentPrice * 100).toFixed(1);
-                const changeClass = price.newPrice > price.currentPrice ? 'status-success' : 'status-danger';
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${price.productName}</td>
-                    <td>${formatCurrency(price.currentPrice)}</td>
-                    <td>${formatCurrency(price.newPrice)}</td>
-                    <td><span class="status-badge ${changeClass}">${change}%</span></td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function importNewPrices() {
-            const jsonInput = document.getElementById('import-prices').value;
-
-            if (!jsonInput) {
-                alert('Введите данные в формате JSON');
-                return;
-            }
-
-            try {
-                const newPrices = JSON.parse(jsonInput);
-
-                if (!Array.isArray(newPrices)) {
-                    throw new Error('Должен быть массив объектов');
-                }
-
-                // Проверяем структуру
-                for (const item of newPrices) {
-                    if (!item.productName || !item.newPrice) {
-                        throw new Error('Каждый объект должен содержать productName и newPrice');
-                    }
-                }
-
-                // Добавляем текущие цены из продуктов
-                newPrices.forEach(newPrice => {
-                    const product = mockData.products.find(p => p.name === newPrice.productName);
-                    if (product) {
-                        // Находим существующую запись или создаем новую
-                        const existing = mockData.newPrices.find(p => p.productName === newPrice.productName);
-                        if (existing) {
-                            existing.newPrice = newPrice.newPrice;
-                        } else {
-                            mockData.newPrices.push({
-                                productName: newPrice.productName,
-                                currentPrice: calculateProductPrice(product),
-                                newPrice: newPrice.newPrice
-                            });
-                        }
-                    }
-                });
-
-                loadPrices();
-                alert(`Импортировано ${newPrices.length} цен`);
-
-            } catch (error) {
-                alert(`Ошибка: ${error.message}`);
-            }
-        }
-
-        function updatePrices() {
-            if (mockData.newPrices.length === 0) {
-                alert('Нет новых цен для обновления');
-                return;
-            }
-
-            alert(`Цены обновлены для ${mockData.newPrices.length} товаров`);
-            mockData.newPrices = [];
-            loadPrices();
-            document.getElementById('import-prices').value = '';
-        }
-
-        function clearNewPrices() {
-            mockData.newPrices = [];
-            loadPrices();
-            document.getElementById('import-prices').value = '';
-        }
-
-        // Вспомогательная функция для расчета цены продукта
-        function calculateProductPrice(product) {
-            const basePrice = 1000;
-            return Math.round(basePrice * (1 + product.markup / 100));
-        }
-
         // 11. Поставщики
         function loadSuppliers() {
             const tbody = document.getElementById('suppliers-table');
@@ -1154,12 +1023,12 @@
             mockData.suppliers.forEach(supplier => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${supplier.id}</td>
-                    <td><strong>${supplier.name}</strong></td>
-                    <td>${supplier.country}</td>
-                    <td>${supplier.phone}</td>
-                    <td>${supplier.address}</td>
-                `;
+                        <td>${supplier.id}</td>
+                        <td><strong>${supplier.name}</strong></td>
+                        <td>${supplier.country}</td>
+                        <td>${supplier.phone}</td>
+                        <td>${supplier.address}</td>
+                    `;
                 tbody.appendChild(row);
             });
         }
@@ -1208,17 +1077,17 @@
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${product.id}</td>
-                    <td><strong>${product.name}</strong></td>
-                    <td>${product.purchases} покупок</td>
-                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                    <td>
-                        ${canDelete ?
-                            `<button class="btn btn-small btn-danger" onclick="deleteProduct(${product.id})">Удалить</button>` :
-                            '<button class="btn btn-small" disabled>Удалить</button>'
-                        }
-                    </td>
-                `;
+                        <td>${product.id}</td>
+                        <td><strong>${product.name}</strong></td>
+                        <td>${product.purchases} покупок</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>
+                            ${canDelete ?
+                        `<button class="btn btn-small btn-danger" onclick="deleteProduct(${product.id})">Удалить</button>` :
+                        '<button class="btn btn-small" disabled>Удалить</button>'
+                    }
+                        </td>
+                    `;
                 tbody.appendChild(row);
             });
         }

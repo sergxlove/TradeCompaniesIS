@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TradeCompanyIS.Core\TradeCompanyIS.Core.csproj" />
     <ProjectReference Include="..\TradeCompanyIS.DataAccess.Postgres\TradeCompanyIS.DataAccess.Postgres.csproj" />
   </ItemGroup>
