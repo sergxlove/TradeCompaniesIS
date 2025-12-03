@@ -20,8 +20,10 @@ namespace TradeCompaniesIS
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
             builder.Services.AddDbContext<TradeCompanyDbContext>(options =>
-                options.UseNpgsql("User ID=postgres;Password=123;Host=localhost;Port=5432;Database=db;"));
+                options.UseNpgsql("User ID=postgres;Password=123;Host=localhost;" +
+                "Port=5432;Database=db;"));
             builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
             builder.Services.AddScoped<ICountryRepository, CountryRepository>();
             builder.Services.AddScoped<IItemsRepository, ItemsRepository>();
@@ -39,6 +41,8 @@ namespace TradeCompaniesIS
             builder.Services.AddScoped<IUsersService, UsersService>();
             builder.Services.AddScoped<IWareHousesService, WareHousesService>();
             builder.Services.AddScoped<ITransactionsWork, TransactionsWork>();
+            builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -64,6 +68,7 @@ namespace TradeCompaniesIS
                         }
                     };
                 });
+
             builder.Services.AddAuthorization(options =>
             {
                 options.AddPolicy("OnlyForAdmin", policy =>
@@ -79,6 +84,7 @@ namespace TradeCompaniesIS
                     policy.RequireClaim(ClaimTypes.Role, "productSpec");
                 });
             });
+
             builder.Services.AddRateLimiter(options =>
             {
                 options.AddFixedWindowLimiter("GeneralPolicy", opt =>
@@ -101,6 +107,7 @@ namespace TradeCompaniesIS
                     opt.AutoReplenishment = true;
                 });
             });
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             var app = builder.Build();
