@@ -32,11 +32,21 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
 
         public async Task<Guid> GetIdByNameAsync(string name, CancellationToken token)
         {
-            ItemsEntity? itemEntitu = await _context.ItemsTable
+            ItemsEntity? itemEntity = await _context.ItemsTable
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Name == name, token);
-            if (itemEntitu is null) return Guid.Empty;
-            return itemEntitu.Id;
+            if (itemEntity is null) return Guid.Empty;
+            return itemEntity.Id;
+        }
+
+        public async Task<Items?> GetAsync(Guid id, CancellationToken token)
+        {
+            ItemsEntity? itemsEntity = await _context.ItemsTable
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == id, token);
+            if (itemsEntity is null) return null;
+            return Items.Create(itemsEntity.Id, itemsEntity.Name, itemsEntity.Description,
+                itemsEntity.Price, itemsEntity.IdWareHouse, itemsEntity.QuantityWareHouse).Value;
         }
 
         public async Task<int> DeleteAsync(Guid id, CancellationToken token)

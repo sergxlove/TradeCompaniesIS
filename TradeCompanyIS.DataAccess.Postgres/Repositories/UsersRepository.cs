@@ -41,5 +41,13 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
             if (user == null) return false;
             return Users.VerifyPassword(password, user.HashPassword);
         }
+
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
+        {
+            return await _context.UsersTable
+                .AsNoTracking()
+                .Where(a => a.Id == id)
+                .ExecuteDeleteAsync(token);
+        }
     }
 }
