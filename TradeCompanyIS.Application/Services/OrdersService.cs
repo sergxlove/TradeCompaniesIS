@@ -15,5 +15,10 @@ namespace TradeCompanyIS.Application.Services
         {
             return await _repository.AddAsync(order, token);
         }
+
+        public async Task<List<Orders>> GetByIdClientAsync(Guid idClient, CancellationToken token)
+        {
+            return await _repository.GetByIdClientAsync(idClient, token);
+        }
     }
 }

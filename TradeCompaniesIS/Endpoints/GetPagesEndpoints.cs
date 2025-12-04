@@ -13,22 +13,21 @@
             {
                 context.Response.ContentType = "text/html; charset=utf-8";
                 await context.Response.SendFileAsync("wwwroot/Pages/adminPage.html");
-            })
+            }).RequireAuthorization("OnlyForAdmin")
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/clientPage", async (HttpContext context) =>
             {
                 context.Response.ContentType = "text/html; charset=utf-8";
                 await context.Response.SendFileAsync("wwwroot/Pages/clientPage.html");
-            })
+            }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/loginPage", async (HttpContext context) =>
             {
                 context.Response.ContentType = "text/html; charset=utf-8";
                 await context.Response.SendFileAsync("wwwroot/Pages/loginPage.html");
-            })
-            .RequireRateLimiting("GeneralPolicy");
+            }).RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/regClientPage", async (HttpContext context) =>
             {
@@ -41,7 +40,7 @@
             {
                 context.Response.ContentType = "text/html; charset=utf-8";
                 await context.Response.SendFileAsync("wwwroot/Pages/sallerPage.html");
-            })
+            }).RequireAuthorization("OnlyForProductSpec")
             .RequireRateLimiting("GeneralPolicy");
 
             return app;
