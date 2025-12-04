@@ -9,12 +9,27 @@ namespace TradeCompanyIS.Endpoints
     {
         public static IEndpointRouteBuilder MapTradeOperationsEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapGet("/getClient", () =>
+            app.MapPost("/getClient/{id}", async (Guid id,
+                HttpContext context, 
+                IClientsService clientsService, 
+                CancellationToken token) =>
             {
-
+                try
+                {
+                    if (id == Guid.Empty)
+                        return Results.BadRequest("id is empty");
+                    Clients? client = await clientsService.GetAsync(id, token);
+                    if (client is null)
+                        return Results.BadRequest("client not found");
+                    return Results.Ok(client);
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
             });
 
-            app.MapGet("/getOrderClient/{id}", async (Guid id,
+            app.MapPost("/getOrderClient/{id}", async (Guid id,
                 HttpContext context, 
                 IOrdersService ordersService, 
                 CancellationToken token) =>
@@ -25,30 +40,44 @@ namespace TradeCompanyIS.Endpoints
                         return Results.BadRequest("id client empty");
                     List<Orders> orders = await ordersService.GetByIdClientAsync(id, token);
                     return Results.Ok(orders);
-
                 }
                 catch
                 {
-                    return Results.BadRequest("error");
+                    return Results.InternalServerError();
                 }
             });
 
-            app.MapGet("/createOrderClient", () =>
+            app.MapPost("/createOrderClient", async (HttpContext context, 
+                CreateOrderRequest request, 
+                IOrdersService ordersService, 
+                CancellationToken token) =>
+            {
+                try
+                {
+                    if (request is null)
+                        return Results.BadRequest("request is null");
+                    ResultModel<Orders> order = Orders.Create(Guid.NewGuid(),
+                        request.IdClients, request.IdItem,
+                        DateOnly.FromDateTime(DateTime.UtcNow), request.Quantity);
+                    if (!order.IsSuccess)
+                        return Results.BadRequest(order.Error);
+                    Guid result = await ordersService.AddAsync(order.Value, token);
+                    if (result != order.Value.Id)
+                        return Results.BadRequest(order.Error);
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
+            app.MapPost("/updatePriceItem", () =>
             {
 
             });
 
-            app.MapGet("/searchItem", () =>
-            {
-
-            });
-
-            app.MapGet("/updatePriceItem", () =>
-            {
-
-            });
-
-            app.MapGet("/addItem", async (HttpContext context, 
+            app.MapPost("/addItem", async (HttpContext context, 
                 ItemAddRequest request, 
                 IItemsService itemsService,
                 CancellationToken token) =>
@@ -67,11 +96,11 @@ namespace TradeCompanyIS.Endpoints
                 }
                 catch
                 {
-                    return Results.BadRequest("error");
+                    return Results.InternalServerError();
                 }
             });
 
-            app.MapGet("/warehouseGet", async (HttpContext context,
+            app.MapPost("/warehouseGet", async (HttpContext context,
                 IWareHousesService warehousesService, 
                 CancellationToken token) =>
             {
@@ -87,23 +116,53 @@ namespace TradeCompanyIS.Endpoints
                 }
                 catch
                 {
-                    return Results.BadRequest("error");
+                    return Results.InternalServerError();
                 }
             });
 
-            app.MapGet("/getItem", () =>
+            app.MapPost("/getItem", async (Guid id, 
+                HttpContext context, 
+                IItemsService itemsService, 
+                CancellationToken token) =>
+            {
+                try
+                {
+                    if (id == Guid.Empty)
+                        return Results.BadRequest("id item is empty");
+                    Items? item = await itemsService.GetAsync(id, token);
+                    if(item is null) 
+                        return Results.BadRequest("item not found");
+                    return Results.Ok(item);
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
+            app.MapPost("/addProvider", () =>
             {
 
             });
 
-            app.MapGet("/addProvider", () =>
+            app.MapDelete("/deleteItem", async (Guid id,
+                HttpContext context,
+                IItemsService itemsService,
+                CancellationToken token) =>
             {
-
-            });
-
-            app.MapGet("/deleteItem", () =>
-            {
-
+                try
+                {
+                    if (id == Guid.Empty)
+                        return Results.BadRequest("id item is empty");
+                    int result = await itemsService.DeleteAsync(id, token);
+                    if (result == 0)
+                        return Results.BadRequest("item is not delete");
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
             });
 
             app.MapPost("/getProviders", async (HttpContext context, 
@@ -122,7 +181,7 @@ namespace TradeCompanyIS.Endpoints
                 }
                 catch
                 {
-                    return Results.BadRequest("error");
+                    return Results.InternalServerError();
                 }
             });
 
@@ -140,7 +199,7 @@ namespace TradeCompanyIS.Endpoints
                 }
                 catch
                 {
-                    return Results.BadRequest("error");
+                    return Results.InternalServerError();
                 }
             });
 
@@ -165,18 +224,28 @@ namespace TradeCompanyIS.Endpoints
                 }
                 catch
                 {
-                    return Results.BadRequest("error");
+                    return Results.InternalServerError();
                 }
             });
 
-            app.MapGet("/updatePassword", () =>
+            app.MapDelete("/deleteUser/{id}", async (Guid id, 
+                HttpContext context, 
+                IUsersService userService, 
+                CancellationToken token) =>
             {
-
-            });
-
-            app.MapGet("/deleteUser", () =>
-            {
-
+                try
+                {
+                    if (id == Guid.Empty)
+                        return Results.BadRequest("id user is empty");
+                    int result = await userService.DeleteAsync(id, token);
+                    if (result == 0)
+                        return Results.BadRequest("user no delete");
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
             });
 
             return app;

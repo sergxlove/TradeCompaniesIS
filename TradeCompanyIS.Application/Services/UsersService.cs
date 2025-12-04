@@ -19,5 +19,10 @@ namespace TradeCompanyIS.Application.Services
         {
             return await _repository.VerifyAsync(username, password, token);
         }
+
+        public async Task<int> DeleteAsync(Guid id, CancellationToken token)
+        {
+            return await _repository.DeleteAsync(id, token);
+        }
     }
 }

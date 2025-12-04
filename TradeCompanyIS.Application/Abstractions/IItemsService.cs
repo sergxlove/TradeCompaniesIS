@@ -9,5 +9,6 @@ namespace TradeCompanyIS.Application.Abstractions
         Task<Guid> GetIdByNameAsync(string name, CancellationToken token);
         Task<int> UpdatePriceAsync(Guid id, decimal newPrice, CancellationToken token);
         Task<int> UpdateQuantityAsync(Guid id, int quantity, CancellationToken token);
+        Task<Items?> GetAsync(Guid id, CancellationToken token);
     }
 }

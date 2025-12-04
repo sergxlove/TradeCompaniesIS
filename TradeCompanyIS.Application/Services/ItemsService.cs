@@ -32,5 +32,9 @@ namespace TradeCompanyIS.Application.Services
         {
             return await _repository.UpdateQuantityAsync(id, quantity, token);
         }
+        public async Task<Items?> GetAsync(Guid id, CancellationToken token)
+        {
+            return await _repository.GetAsync(id, token);
+        }
     }
 }
