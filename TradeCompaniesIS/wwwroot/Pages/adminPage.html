@@ -658,7 +658,6 @@
 
     <script>
         const databaseData = {
-            // Роли из дампа (упрощённые)
             roles: [
                 {
                     login: "дима_админ",
@@ -683,7 +682,6 @@
                 },   
             ],
 
-            // Таблицы из дампа
             tables: [
                 { name: "Клиент", rows: 42, size: "256 KB", owner: "postgres", data: [] },
                 { name: "Товар", rows: 35, size: "128 KB", owner: "postgres", data: [] },
@@ -702,7 +700,6 @@
                 { name: "аудит_удаления_товаров", rows: 18, size: "48 KB", owner: "postgres", data: [] }
             ],
 
-            // Мок-данные для таблиц (для демонстрации)
             mockTableData: {
                 "Клиент": [
                     { "id_клиента": 1, "Фамилия": "Иванов", "Имя": "Иван", "Отчество": "Иванович", "Номер телефона": "+7 912 345 67 89", "Почта": "ivanov@example.com", "id_страны": 1, "Дата рождения": "1970-05-15", "Адрес": "Москва, ул. Ленина, д. 1" },
@@ -747,17 +744,14 @@
             }
         };
 
-        // Переменные для пагинации
         let currentTable = '';
         let currentPage = 1;
         let pageSize = 10;
         let totalPages = 1;
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Инициализация навигации
             initializeNavigation();
 
-            // Загрузка данных
             loadRoles();
             loadTables();
         });
@@ -765,11 +759,9 @@
         function logout() {
             if (confirm("Вы уверены, что хотите выйти?")) {
                 alert("Вы вышли из системы");
-                // window.location.href = "login.html";
             }
         }
 
-        // Навигация
         function initializeNavigation() {
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {
@@ -780,7 +772,6 @@
                     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
                     document.getElementById(pageId + '-page').classList.add('active');
 
-                    // Скрываем просмотр данных при переключении на другую страницу
                     if (pageId !== 'database') {
                         document.getElementById('data-view-container').style.display = 'none';
                     }
@@ -788,7 +779,6 @@
             });
         }
 
-        // 1. Управление ролями
         function loadRoles() {
             const tbody = document.getElementById('roles-table');
             tbody.innerHTML = '';
@@ -843,7 +833,6 @@
         }
 
         function showCreateRoleModal() {
-            // Очищаем поля формы
             document.getElementById('new-user-login').value = '';
             document.getElementById('new-user-password').value = '';
             document.getElementById('new-user-password-confirm').value = '';
@@ -880,14 +869,12 @@
                 return;
             }
 
-            // Проверяем, не существует ли уже такой логин
             const existingUser = databaseData.roles.find(r => r.login === login);
             if (existingUser) {
                 alert('Пользователь с таким логином уже существует');
                 return;
             }
 
-            // В реальной системе здесь будет AJAX-запрос к серверу
             const newUser = {
                 login: login,
                 role: role,
@@ -935,7 +922,6 @@
                 return;
             }
 
-            // В реальной системе здесь будет AJAX-запрос к серверу
             alert(`Пароль для пользователя "${login}" успешно изменен!`);
 
             hideModal('change-password-modal');
@@ -952,7 +938,6 @@
         function confirmDeleteUser() {
             const login = document.getElementById('delete-user-name').textContent;
 
-            // В реальной системе здесь будет AJAX-запрос к серверу
             databaseData.roles = databaseData.roles.filter(r => r.login !== login);
 
             alert(`Пользователь "${login}" удален!`);
@@ -961,7 +946,6 @@
             loadRoles();
         }
 
-        // 2. База данных - Таблицы
         function loadTables() {
             const tbody = document.getElementById('tables-table');
             tbody.innerHTML = '';
@@ -997,11 +981,9 @@
             currentTable = tableName;
             currentPage = 1;
 
-            // Показываем контейнер для данных
             document.getElementById('data-view-container').style.display = 'block';
             document.getElementById('table-name').textContent = `Таблица: ${tableName}`;
 
-            // Загружаем данные
             loadTableData();
         }
 
@@ -1009,7 +991,6 @@
             const table = document.getElementById('data-table');
             table.innerHTML = '<tr><td colspan="10" class="loading"><div class="spinner"></div>Загрузка данных...</td></tr>';
 
-            // Имитация загрузки данных
             setTimeout(() => {
                 const data = databaseData.mockTableData[currentTable] || generateMockData(currentTable);
 
@@ -1021,13 +1002,11 @@
                     return;
                 }
 
-                // Вычисляем пагинацию
                 totalPages = Math.ceil(data.length / pageSize);
                 const start = (currentPage - 1) * pageSize;
                 const end = start + pageSize;
                 const pageData = data.slice(start, end);
 
-                // Генерируем заголовки из ключей первого объекта
                 const headers = Object.keys(pageData[0] || {});
                 let headersHtml = '<tr>';
                 headers.forEach(header => {
@@ -1035,13 +1014,11 @@
                 });
                 headersHtml += '</tr>';
 
-                // Генерируем данные
                 let dataHtml = '';
                 pageData.forEach(row => {
                     dataHtml += '<tr>';
                     headers.forEach(header => {
                         let value = row[header];
-                        // Форматируем специальные значения
                         if (value === null || value === undefined) {
                             value = '<em style="color: var(--text-secondary);">NULL</em>';
                         } else if (typeof value === 'string' && value.includes('зашифровано')) {
@@ -1054,7 +1031,6 @@
 
                 table.innerHTML = `<thead>${headersHtml}</thead><tbody>${dataHtml}</tbody>`;
 
-                // Обновляем информацию о пагинации
                 document.getElementById('page-info').textContent = `Страница ${currentPage} из ${totalPages}`;
                 document.getElementById('prev-btn').disabled = currentPage <= 1;
                 document.getElementById('next-btn').disabled = currentPage >= totalPages;
@@ -1063,7 +1039,6 @@
         }
 
         function generateMockData(tableName) {
-            // Генерация простых мок-данных для таблиц без данных
             switch(tableName) {
                 case "Поставщик":
                     return [
@@ -1101,11 +1076,9 @@
             loadTables();
             alert('Список таблиц обновлен');
 
-            // Скрываем просмотр данных при обновлении
             document.getElementById('data-view-container').style.display = 'none';
         }
 
-        // Вспомогательные функции
         function showModal(modalId) {
             document.getElementById(modalId).classList.add('active');
         }
