@@ -34,7 +34,6 @@
             min-height: 100vh;
         }
 
-        /* Header */
         .header {
             background: var(--bg-secondary);
             padding: 20px 40px;
@@ -78,18 +77,16 @@
             transition: all 0.3s;
         }
 
-            .logout-btn:hover {
-                background: var(--danger);
-                border-color: var(--danger);
-            }
+        .logout-btn:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+        }
 
-        /* Main container */
         .container {
             display: flex;
             min-height: calc(100vh - 73px);
         }
 
-        /* Sidebar */
         .sidebar {
             width: 280px;
             background: var(--bg-secondary);
@@ -107,17 +104,16 @@
             border-left: 4px solid transparent;
         }
 
-            .nav-item:hover {
-                background: var(--bg-card);
-            }
+        .nav-item:hover {
+            background: var(--bg-card);
+        }
 
-            .nav-item.active {
-                background: var(--bg-card);
-                border-left-color: var(--accent);
-                color: var(--accent);
-            }
+        .nav-item.active {
+            background: var(--bg-card);
+            border-left-color: var(--accent);
+            color: var(--accent);
+        }
 
-        /* Main content */
         .main-content {
             flex: 1;
             padding: 30px;
@@ -128,9 +124,9 @@
             display: none;
         }
 
-            .page.active {
-                display: block;
-            }
+        .page.active {
+            display: block;
+        }
 
         .page-title {
             font-size: 28px;
@@ -145,7 +141,6 @@
             margin-bottom: 30px;
         }
 
-        /* Tables */
         .table-container {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -182,7 +177,6 @@
             background: var(--bg-secondary);
         }
 
-        /* Status badges */
         .status-badge {
             padding: 4px 12px;
             border-radius: 20px;
@@ -211,7 +205,6 @@
             color: var(--accent);
         }
 
-        /* Buttons */
         .btn {
             padding: 8px 16px;
             border: none;
@@ -227,9 +220,9 @@
             color: #1e293b;
         }
 
-            .btn-primary:hover {
-                background: var(--accent-hover);
-            }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
 
         .btn-success {
             background: var(--success);
@@ -246,7 +239,6 @@
             font-size: 12px;
         }
 
-        /* Forms */
         .form-card {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -259,36 +251,36 @@
             margin-bottom: 20px;
         }
 
-            .form-group label {
-                display: block;
-                margin-bottom: 8px;
-                color: var(--text-primary);
-                font-weight: 500;
-            }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
 
-                .form-group label.required::after {
-                    content: " *";
-                    color: var(--danger);
-                }
+        .form-group label.required::after {
+            content: " *";
+            color: var(--danger);
+        }
 
-            .form-group input,
-            .form-group select,
-            .form-group textarea {
-                width: 100%;
-                padding: 12px 16px;
-                background: var(--bg-secondary);
-                border: 2px solid var(--border);
-                border-radius: 8px;
-                color: var(--text-primary);
-                font-size: 15px;
-            }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 15px;
+        }
 
-                .form-group input:focus,
-                .form-group select:focus,
-                .form-group textarea:focus {
-                    outline: none;
-                    border-color: var(--accent);
-                }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+             outline: none;
+             border-color: var(--accent);
+        }
 
         .form-row {
             display: grid;
@@ -304,7 +296,6 @@
             border-top: 1px solid var(--border);
         }
 
-        /* Search and filters */
         .search-container {
             display: flex;
             gap: 10px;
@@ -320,7 +311,6 @@
             color: var(--text-primary);
         }
 
-        /* Tabs */
         .tabs {
             display: flex;
             border-bottom: 1px solid var(--border);
@@ -333,21 +323,20 @@
             border-bottom: 3px solid transparent;
         }
 
-            .tab.active {
-                border-bottom-color: var(--accent);
-                color: var(--accent);
-                font-weight: 600;
-            }
+        .tab.active {
+            border-bottom-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
 
         .tab-content {
             display: none;
         }
 
-            .tab-content.active {
-                display: block;
-            }
+        .tab-content.active {
+            display: block;
+        }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -386,7 +375,6 @@
             cursor: pointer;
         }
 
-        /* Loading */
         .loading {
             text-align: center;
             padding: 40px;
@@ -409,7 +397,6 @@
             }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -431,7 +418,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
         <div class="logo">
             📦 Панель товароведа
@@ -442,9 +428,7 @@
         </div>
     </div>
 
-    <!-- Main container -->
     <div class="container">
-        <!-- Sidebar -->
         <div class="sidebar">
             <div class="nav-item active" data-page="products">
                 📋 Товары
@@ -460,9 +444,7 @@
             </div>
         </div>
 
-        <!-- Main content -->
         <div class="main-content">
-            <!-- Товары -->
             <div class="page active" id="products-page">
                 <h1 class="page-title">Управление товарами</h1>
                 <p class="page-subtitle">Добавление и редактирование товаров в каталоге</p>
@@ -486,13 +468,11 @@
                             </tr>
                         </thead>
                         <tbody id="products-table">
-                            <!-- Заполняется через JS -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Поставки -->
             <div class="page" id="supplies-page">
                 <h1 class="page-title">Создание поставки</h1>
                 <p class="page-subtitle">Добавление товаров в новую поставку</p>
@@ -503,7 +483,6 @@
                             <label for="supply-supplier" class="required">Поставщик</label>
                             <select id="supply-supplier">
                                 <option value="">Выберите поставщика...</option>
-                                <!-- Заполняется через JS -->
                             </select>
                         </div>
 
@@ -511,7 +490,6 @@
                             <label for="supply-warehouse" class="required">Склад</label>
                             <select id="supply-warehouse">
                                 <option value="">Выберите склад...</option>
-                                <!-- Заполняется через JS -->
                             </select>
                         </div>
                     </div>
@@ -543,7 +521,6 @@
                             <label for="add-product-select">Добавить товар</label>
                             <select id="add-product-select">
                                 <option value="">Выберите товар...</option>
-                                <!-- Заполняется через JS -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -565,7 +542,6 @@
                 </div>
             </div>
 
-            <!-- Поставщики -->
             <div class="page" id="suppliers-page">
                 <h1 class="page-title">Управление поставщиками</h1>
                 <p class="page-subtitle">Список поставщиков и добавление новых</p>
@@ -586,13 +562,11 @@
                             </tr>
                         </thead>
                         <tbody id="suppliers-table">
-                            <!-- Заполняется через JS -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Удаление -->
             <div class="page" id="delete-page">
                 <h1 class="page-title">Удаление товаров</h1>
                 <p class="page-subtitle">Безопасное удаление непопулярных товаров</p>
@@ -609,7 +583,6 @@
                             </tr>
                         </thead>
                         <tbody id="delete-table">
-                            <!-- Заполняется через JS -->
                         </tbody>
                     </table>
                 </div>
@@ -617,7 +590,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно добавления товара -->
     <div class="modal" id="addProductModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -649,7 +621,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно добавления поставщика -->
     <div class="modal" id="addSupplierModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -691,7 +662,6 @@
     </div>
 
     <script>
-        // Мок-данные
         const mockData = {
             products: [
                 { id: "#", name: "Промышленный вентилятор", description: "Вентилятор с высокой производительностью", markup: 25, stock: 105, purchases: 1 },
@@ -718,7 +688,6 @@
             ]
         };
 
-        // Текущая поставка
         let currentSupply = {
             items: [],
             supplierId: null,
@@ -726,19 +695,15 @@
         };
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Инициализация навигации
             initializeNavigation();
 
-            // Загрузка данных
             loadProducts();
             loadSuppliers();
             loadDeleteProducts();
 
-            // Заполнение выпадающих списков
             populateSelects();
         });
 
-        // Навигация
         function initializeNavigation() {
             const navItems = document.querySelectorAll('.nav-item');
 
@@ -754,7 +719,6 @@
             });
         }
 
-        // Модальные окна
         function showModal(modalId) {
             document.getElementById(modalId).style.display = 'flex';
         }
@@ -771,7 +735,6 @@
             showModal('addSupplierModal');
         }
 
-        // 1. Управление товарами
         function loadProducts() {
             const tbody = document.getElementById('products-table');
             tbody.innerHTML = '';
@@ -861,9 +824,7 @@
             }
         }
 
-        // 3. Управление поставками
         function populateSelects() {
-            // Поставщики
             const supplierSelect = document.getElementById('supply-supplier');
             supplierSelect.innerHTML = '<option value="">Выберите поставщика...</option>';
             mockData.suppliers.forEach(supplier => {
@@ -873,7 +834,6 @@
                 supplierSelect.appendChild(option);
             });
 
-            // Склады
             const warehouseSelect = document.getElementById('supply-warehouse');
             warehouseSelect.innerHTML = '<option value="">Выберите склад...</option>';
             mockData.warehouses.forEach(warehouse => {
@@ -883,7 +843,6 @@
                 warehouseSelect.appendChild(option);
             });
 
-            // Товары для добавления в поставку
             const productSelect = document.getElementById('add-product-select');
             productSelect.innerHTML = '<option value="">Выберите товар...</option>';
             mockData.products.forEach(product => {
@@ -915,7 +874,6 @@
                 return;
             }
 
-            // Проверяем, есть ли уже такой товар в поставке
             const existingItem = currentSupply.items.find(item => item.productId === productId);
 
             if (existingItem) {
@@ -931,7 +889,6 @@
 
             updateSupplyItemsDisplay();
 
-            // Очищаем поля ввода
             document.getElementById('add-product-select').value = '';
             document.getElementById('add-product-quantity').value = 1;
             document.getElementById('add-product-price').value = '';
@@ -983,7 +940,6 @@
                 return;
             }
 
-            // Проверяем минимальные цены
             for (const item of currentSupply.items) {
                 if (item.price < 10) {
                     alert(`Цена товара "${item.productName}" ниже минимальной (10 руб.)`);
@@ -991,7 +947,6 @@
                 }
             }
 
-            // Обновляем остатки товаров
             currentSupply.items.forEach(item => {
                 const product = mockData.products.find(p => p.id === item.productId);
                 if (product) {
@@ -1001,10 +956,8 @@
 
             alert(`Поставка успешно создана! Товары добавлены на склад.`);
 
-            // Очищаем форму
             clearSupplyForm();
 
-            // Перезагружаем данные
             loadProducts();
         }
 
@@ -1015,7 +968,6 @@
             document.getElementById('supply-warehouse').value = '';
         }
 
-        // 11. Поставщики
         function loadSuppliers() {
             const tbody = document.getElementById('suppliers-table');
             tbody.innerHTML = '';
@@ -1060,12 +1012,11 @@
 
             mockData.suppliers.push(newSupplier);
             loadSuppliers();
-            populateSelects(); // Обновляем выпадающий список в поставках
+            populateSelects(); 
             closeModal('addSupplierModal');
             alert(`Поставщик "${name}" добавлен`);
         }
 
-        // Удаление товаров
         function loadDeleteProducts() {
             const tbody = document.getElementById('delete-table');
             tbody.innerHTML = '';
@@ -1109,7 +1060,6 @@
             }
         }
 
-        // Вспомогательные функции
         function formatCurrency(amount) {
             return new Intl.NumberFormat('ru-RU', {
                 style: 'currency',
@@ -1121,7 +1071,6 @@
         function logout() {
             if (confirm("Выйти из системы?")) {
                 alert("Вы вышли из системы");
-                // window.location.href = "login.html";
             }
         }
     </script>
