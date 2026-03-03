@@ -292,6 +292,50 @@ namespace TradeCompanyIS.Endpoints
             }).RequireAuthorization("OnlyForAdmin")
             .RequireRateLimiting("GeneralPolicy");
 
+            app.MapGet("/users", () =>
+            {
+
+            });
+
+            app.MapGet("/tables", () =>
+            {
+
+            });
+
+            app.MapGet("/tables/{name}/data", () =>
+            {
+
+            });
+
+            app.MapPost("/change-password", async ( HttpContext context,
+                [FromBody] ChangePasswordRequest request,
+                [FromServices] IUsersService userService,
+                [FromServices] IJwtProviderService jwtService,
+                [FromServices] IPasswordHasherService passwordHasher,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    if (request.Username == string.Empty || request.Password == string.Empty)
+                        return Results.BadRequest("login or password is empty");
+                    string roleUser = await userService.GetRoleAsync(request.Username, token);
+                    var user = Users.Create(Guid.NewGuid(), request.Username, request.Password,
+                        roleUser, passwordHasher);
+                    if (!user.IsSuccess) return Results.BadRequest(user.Error);
+                    await userService.UpdatePasswordAsync(user.Value.Username, user.Value.HashPassword, token);
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
+            app.MapDelete("/users/{users}", () =>
+            {
+
+            });
+
             return app;
         }
     }

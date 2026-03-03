@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.RateLimiting;
 using TradeCompanyIS.Application.Abstractions;
 using TradeCompanyIS.Application.Services;
+using TradeCompanyIS.Core.Abstractions;
+using TradeCompanyIS.Core.Services;
 using TradeCompanyIS.DataAccess.Postgres;
 using TradeCompanyIS.DataAccess.Postgres.Abstractions;
 using TradeCompanyIS.DataAccess.Postgres.Infrastructure;
@@ -42,6 +44,9 @@ namespace TradeCompaniesIS
             builder.Services.AddScoped<IWareHousesService, WareHousesService>();
             builder.Services.AddScoped<ITransactionsWork, TransactionsWork>();
             builder.Services.AddScoped<IJwtProviderService, JwtProviderService>();
+            builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
+            builder.Services.AddScoped<ITableRepository, TableRepository>();
+            builder.Services.AddScoped<ITableService, TableService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -77,7 +82,7 @@ namespace TradeCompaniesIS
                 });
                 options.AddPolicy("OnlyForAuthClient", policy =>
                 {
-                    policy.RequireClaim(ClaimTypes.Role, "client");
+                    policy.RequireClaim(ClaimTypes.Role, "user");
                 });
                 options.AddPolicy("OnlyForProductSpec", policy =>
                 {

@@ -35,6 +35,42 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
             }
         }
 
+        public async Task<bool> CheckAsync(string username, CancellationToken token)
+        {
+            UsersEntity? result = await _context.UsersTable
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Username == username, token);
+            if (result is null) return false;
+            return true;
+        }
+
+        public async Task<int> UpdatePasswordAsync(string username, string newPassword,  
+            CancellationToken token)
+        {
+            return await _context.UsersTable
+                .AsNoTracking()
+                .Where(a => a.Username == username)
+                .ExecuteUpdateAsync(a => a.SetProperty(a => a.HashPassword, newPassword), token);
+        }
+
+        public async Task<string> GetRoleAsync(string username, CancellationToken token)
+        {
+            UsersEntity? result = await _context.UsersTable
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Username == username, token);
+            if (result is null) return string.Empty;
+            return result.Role;
+        }
+
+        public async Task<Guid> GetIdByUsernameAsync(string username, CancellationToken token)
+        {
+            UsersEntity? result = await _context.UsersTable
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Username == username, token);
+            if (result is null) return Guid.Empty;
+            return result.Id;
+        }
+
         public async Task<bool> VerifyAsync(string username, string password, CancellationToken token)
         {
             var user = await _context.UsersTable.FirstOrDefaultAsync(a => a.Username == username, token);
