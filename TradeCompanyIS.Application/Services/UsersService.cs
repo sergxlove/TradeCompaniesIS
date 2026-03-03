@@ -24,5 +24,25 @@ namespace TradeCompanyIS.Application.Services
         {
             return await _repository.DeleteAsync(id, token);
         }
+
+        public async Task<bool> CheckAsync(string username, CancellationToken token)
+        {
+            return await _repository.CheckAsync(username, token);
+        }
+        public async Task<int> UpdatePasswordAsync(string username, string newPassword, 
+            CancellationToken token)
+        {
+            return await _repository.UpdatePasswordAsync(username, newPassword, token);
+        }
+
+        public async Task<string> GetRoleAsync(string username, CancellationToken token)
+        {
+            return await _repository.GetRoleAsync(username, token);
+        }
+
+        public async Task<Guid> GetIdByUsernameAsync(string username, CancellationToken token)
+        {
+            return await _repository.GetIdByUsernameAsync(username, token);
+        }
     }
 }

@@ -29,6 +29,12 @@
                 await context.Response.SendFileAsync("wwwroot/Pages/loginPage.html");
             }).RequireRateLimiting("GeneralPolicy");
 
+            app.MapGet("/regPage", async (HttpContext context) =>
+            {
+                context.Response.ContentType = "text/html; charset=utf-8";
+                await context.Response.SendFileAsync("wwwroot/Pages/regPage.html");
+            }).RequireRateLimiting("GeneralPolicy");
+
             app.MapGet("/regClientPage", async (HttpContext context) =>
             {
                 context.Response.ContentType = "text/html; charset=utf-8";

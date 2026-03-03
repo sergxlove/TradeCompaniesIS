@@ -1,0 +1,505 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Складская система - Регистрация</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #475569;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .register-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+            .logo h1 {
+                font-size: 28px;
+                font-weight: 700;
+                background: linear-gradient(135deg, var(--accent), #8b5cf6);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 8px;
+            }
+
+            .logo p {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: var(--text-primary);
+            }
+
+                .form-group label.required::after {
+                    content: " *";
+                    color: var(--danger);
+                }
+
+            .form-group input {
+                width: 100%;
+                padding: 14px 16px;
+                background: var(--bg-card);
+                border: 2px solid var(--border);
+                border-radius: 10px;
+                color: var(--text-primary);
+                font-size: 15px;
+                transition: all 0.3s;
+            }
+
+                .form-group input:focus {
+                    outline: none;
+                    border-color: var(--accent);
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                }
+
+                .form-group input.error {
+                    border-color: var(--danger);
+                }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+
+            .btn:hover {
+                background: var(--accent-hover);
+                transform: translateY(-2px);
+            }
+
+            .btn:active {
+                transform: translateY(0);
+            }
+
+            .btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+            .btn-secondary:hover {
+                background: var(--border);
+            }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: var(--success);
+            margin-bottom: 20px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+            .login-link a {
+                color: var(--accent);
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+                .login-link a:hover {
+                    text-decoration: underline;
+                }
+
+        .version {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+            .form-actions .btn {
+                flex: 1;
+            }
+
+        @media (max-width: 480px) {
+            .register-card {
+                padding: 30px 20px;
+            }
+
+            .logo h1 {
+                font-size: 24px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-card">
+            <div class="logo">
+                <h1>📦 Складская система</h1>
+                <p>Создание нового аккаунта</p>
+            </div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="username" class="required">Логин</label>
+                    <input type="text"
+                           id="username"
+                           placeholder="Введите логин"
+                           required
+                           autocomplete="username">
+                    <div class="error-message" id="usernameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="required">Пароль</label>
+                    <input type="password"
+                           id="password"
+                           placeholder="••••••••"
+                           required
+                           autocomplete="new-password">
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="required">Подтверждение пароля</label>
+                    <input type="password"
+                           id="confirmPassword"
+                           placeholder="••••••••"
+                           required
+                           autocomplete="new-password">
+                    <div class="error-message" id="confirmPasswordError"></div>
+                </div>
+
+                <div class="error-message" id="formError" style="margin-bottom: 15px;"></div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn" id="registerBtn" disabled>
+                        Зарегистрироваться
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                        Очистить
+                    </button>
+                </div>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px;">Регистрация...</p>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <div class="success-icon">✓</div>
+                <h3>Регистрация успешна!</h3>
+                <p>Сейчас вы будете перенаправлены на страницу входа</p>
+            </div>
+
+            <div class="login-link">
+                Уже есть аккаунт? <a href="login.html">Войти в систему</a>
+            </div>
+
+            <div class="version">
+                Версия 1.0.0 • Система управления
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isSubmitting = false;
+
+        function validateForm() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const registerBtn = document.getElementById('registerBtn');
+
+            const isValid = username.length > 0 &&
+                password.length > 0 &&
+                confirmPassword.length > 0 &&
+                password === confirmPassword;
+
+            registerBtn.disabled = !isValid || isSubmitting;
+
+            return isValid;
+        }
+
+        function validatePasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorElement = document.getElementById('confirmPasswordError');
+
+            if (confirmPassword && password !== confirmPassword) {
+                errorElement.textContent = 'Пароли не совпадают';
+                errorElement.style.display = 'block';
+                return false;
+            } else {
+                errorElement.style.display = 'none';
+                return true;
+            }
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function hideError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.style.display = 'none';
+        }
+
+        function showLoading() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showSuccess() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+
+            setTimeout(() => {
+                window.location.href = '/loginPage';
+            }, 2000);
+        }
+
+        function resetForm() {
+            if (isSubmitting) return;
+
+            if (confirm('Очистить все поля формы?')) {
+                document.getElementById('registerForm').reset();
+
+                document.querySelectorAll('.error-message').forEach(el => {
+                    el.style.display = 'none';
+                });
+
+                document.querySelectorAll('input').forEach(el => {
+                    el.classList.remove('error');
+                });
+
+                validateForm();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const registerForm = document.getElementById('registerForm');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+
+            usernameInput.addEventListener('input', function () {
+                if (this.value.length === 0) {
+                    showError('usernameError', 'Введите логин');
+                    this.classList.add('error');
+                } else {
+                    hideError('usernameError');
+                    this.classList.remove('error');
+                }
+                validateForm();
+            });
+
+            passwordInput.addEventListener('input', function () {
+                if (this.value.length === 0) {
+                    showError('passwordError', 'Введите пароль');
+                    this.classList.add('error');
+                } else {
+                    hideError('passwordError');
+                    this.classList.remove('error');
+                }
+
+                validatePasswordMatch();
+                validateForm();
+            });
+
+            confirmPasswordInput.addEventListener('input', function () {
+                validatePasswordMatch();
+                validateForm();
+            });
+
+            registerForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                if (isSubmitting) return;
+
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                if (!username) {
+                    showError('usernameError', 'Введите логин');
+                    usernameInput.classList.add('error');
+                    return;
+                }
+
+                if (!password) {
+                    showError('passwordError', 'Введите пароль');
+                    passwordInput.classList.add('error');
+                    return;
+                }
+
+                if (!confirmPassword) {
+                    showError('confirmPasswordError', 'Подтвердите пароль');
+                    confirmPasswordInput.classList.add('error');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    showError('confirmPasswordError', 'Пароли не совпадают');
+                    confirmPasswordInput.classList.add('error');
+                    return;
+                }
+
+                isSubmitting = true;
+                hideError('formError');
+                showLoading();
+
+                try {
+                    const response = await fetch('/reg', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password,
+                            againPassword: confirmPassword
+                        }),
+                        credentials: 'include'
+                    });
+
+                    if (response.ok) {
+                        showSuccess();
+                    } else {
+                        const errorText = await response.text();
+                        hideLoading();
+                        isSubmitting = false;
+                        showError('formError', errorText || 'Ошибка при регистрации');
+
+                        registerForm.classList.add('error');
+                        setTimeout(() => registerForm.classList.remove('error'), 500);
+                        validateForm();
+                    }
+                } catch (error) {
+                    hideLoading();
+                    isSubmitting = false;
+                    showError('formError', 'Ошибка соединения с сервером');
+                    validateForm();
+                }
+            });
+
+            validateForm();
+        });
+    </script>
+</body>
+</html>
