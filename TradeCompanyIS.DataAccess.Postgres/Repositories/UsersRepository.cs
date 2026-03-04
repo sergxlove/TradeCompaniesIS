@@ -2,6 +2,7 @@
 using TradeCompanyIS.Core.Models;
 using TradeCompanyIS.DataAccess.Postgres.Abstractions;
 using TradeCompanyIS.DataAccess.Postgres.Models;
+using TradeCompanyIS.DataAccess.Postgres.Response;
 
 namespace TradeCompanyIS.DataAccess.Postgres.Repositories
 {
@@ -84,6 +85,19 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
                 .AsNoTracking()
                 .Where(a => a.Id == id)
                 .ExecuteDeleteAsync(token);
+        }
+
+        public async Task<List<UsersResponse>> GetAllUsersAsync(CancellationToken token)
+        {
+            List<UsersEntity> resultEntity = await _context.UsersTable
+                .AsNoTracking()
+                .ToListAsync(token);
+            List<UsersResponse> result = new List<UsersResponse>();
+            foreach(UsersEntity user in resultEntity)
+            {
+                result.Add(new UsersResponse { Role = user.Role, Username = user.Username });
+            }
+            return result;
         }
     }
 }

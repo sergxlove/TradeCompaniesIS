@@ -13,7 +13,7 @@
             {
                 context.Response.ContentType = "text/html; charset=utf-8";
                 await context.Response.SendFileAsync("wwwroot/Pages/adminPage.html");
-            }).RequireAuthorization("OnlyForAdmin")
+            }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/clientPage", async (HttpContext context) =>
