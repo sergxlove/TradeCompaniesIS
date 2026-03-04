@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel;
 using TradeCompanyIS.DataAccess.Postgres.Abstractions;
 using TradeCompanyIS.DataAccess.Postgres.Response;
 
@@ -24,9 +22,9 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
             {
                 try
                 {
-                    var countQuery = $"SELECT COUNT(*) FROM \"{tableName}\"";
+                    var countQuery = $"SELECT COUNT(*) AS \"Value\" FROM \"{tableName}\"";
                     var count = await _context.Database.SqlQueryRaw<int>(countQuery).FirstOrDefaultAsync(token);
-                    var sizeQuery = $"SELECT pg_size_pretty(pg_total_relation_size('\"{tableName}\"'))";
+                    var sizeQuery = $"SELECT pg_size_pretty(pg_total_relation_size('\"{tableName}\"')) AS \"Value\"";
                     var size = await _context.Database.SqlQueryRaw<string>(sizeQuery).FirstOrDefaultAsync(token) ?? "0 KB";
 
                     tableInfos.Add(new TableInfoResponse
@@ -37,8 +35,9 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
                         Owner = "postgres"
                     });
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Console.WriteLine($"Error getting info for table {tableName}: {ex.Message}");
                     continue;
                 }
             }
@@ -67,7 +66,7 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
                             for (int i = 0; i < result.FieldCount; i++)
                             {
                                 var value = result.GetValue(i);
-                                row[result.GetName(i)] = value;
+                                row[result.GetName(i)] = value ;
                             }
                             rows.Add(row);
                         }

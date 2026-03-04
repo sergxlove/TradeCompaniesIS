@@ -1,4 +1,5 @@
 ﻿using TradeCompanyIS.Core.Models;
+using TradeCompanyIS.DataAccess.Postgres.Response;
 
 namespace TradeCompanyIS.DataAccess.Postgres.Abstractions
 {
@@ -11,5 +12,6 @@ namespace TradeCompanyIS.DataAccess.Postgres.Abstractions
         Task<int> UpdatePasswordAsync(string username, string newPassword, CancellationToken token);
         Task<string> GetRoleAsync(string username, CancellationToken token);
         Task<Guid> GetIdByUsernameAsync(string username, CancellationToken token);
+        Task<List<UsersResponse>> GetAllUsersAsync(CancellationToken token);
     }
 }

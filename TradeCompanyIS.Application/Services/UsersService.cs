@@ -1,6 +1,7 @@
 ﻿using TradeCompanyIS.Application.Abstractions;
 using TradeCompanyIS.Core.Models;
 using TradeCompanyIS.DataAccess.Postgres.Abstractions;
+using TradeCompanyIS.DataAccess.Postgres.Response;
 
 namespace TradeCompanyIS.Application.Services
 {
@@ -43,6 +44,11 @@ namespace TradeCompanyIS.Application.Services
         public async Task<Guid> GetIdByUsernameAsync(string username, CancellationToken token)
         {
             return await _repository.GetIdByUsernameAsync(username, token);
+        }
+
+        public async Task<List<UsersResponse>> GetAllUsersAsync(CancellationToken token)
+        {
+            return await _repository.GetAllUsersAsync(token);
         }
     }
 }

@@ -2,6 +2,7 @@
 using TradeCompanyIS.Application.Abstractions;
 using TradeCompanyIS.Core.Abstractions;
 using TradeCompanyIS.Core.Models;
+using TradeCompanyIS.DataAccess.Postgres.Response;
 using TradeCompanyIS.Requests;
 
 namespace TradeCompanyIS.Endpoints
@@ -292,19 +293,50 @@ namespace TradeCompanyIS.Endpoints
             }).RequireAuthorization("OnlyForAdmin")
             .RequireRateLimiting("GeneralPolicy");
 
-            app.MapGet("/users", () =>
+            app.MapGet("/users", async (
+                [FromServices] IUsersService userService,
+                CancellationToken token) =>
             {
-
+                try
+                {
+                    List<UsersResponse> result = await userService.GetAllUsersAsync(token);
+                    return Results.Ok(result);
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
             });
 
-            app.MapGet("/tables", () =>
+            app.MapGet("/tables", async (
+                [FromServices] ITableService tableService, 
+                CancellationToken token) =>
             {
-
+                try
+                {
+                    List<TableInfoResponse> result = new List<TableInfoResponse>();
+                    result = await tableService.GetTablesAsync(token);
+                    return Results.Ok(result);
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
             });
 
-            app.MapGet("/tables/{name}/data", () =>
+            app.MapGet("/tables/{name}/data", async (string name,
+                [FromServices] ITableService tableService,
+                CancellationToken token) =>
             {
-
+                try
+                {
+                    TableDataResponse result = await tableService.GetTableDataAsync(name, token);
+                    return Results.Ok(result);
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
             });
 
             app.MapPost("/change-password", async ( HttpContext context,
@@ -331,9 +363,22 @@ namespace TradeCompanyIS.Endpoints
                 }
             });
 
-            app.MapDelete("/users/{users}", () =>
+            app.MapDelete("/users/{users}", async (string users,
+                [FromServices] IUsersService userService,
+                CancellationToken token) =>
             {
-
+                try
+                {
+                    if (string.IsNullOrEmpty(users))
+                        return Results.BadRequest("Login is empty");
+                    Guid userId = await userService.GetIdByUsernameAsync(users, token);
+                    await userService.DeleteAsync(userId, token);   
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.BadRequest();
+                }
             });
 
             return app;
