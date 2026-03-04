@@ -80,7 +80,7 @@ namespace TradeCompanyIS.Endpoints
             {
                 context.Response.Cookies.Delete("jwt");
                 return Results.Ok();
-            }).RequireAuthorization("OnlyForAuthUser")
+            }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
             return app;
         }

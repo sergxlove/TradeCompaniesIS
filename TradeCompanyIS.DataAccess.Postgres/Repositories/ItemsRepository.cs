@@ -30,6 +30,20 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
             return itemEntity.Id;
         }
 
+        public async Task<List<Items>> GetAllAsync(CancellationToken token)
+        {
+            List<ItemsEntity> resultEntity = await _context.ItemsTable
+                .AsNoTracking()
+                .ToListAsync();
+            List<Items> result = new List<Items>();
+            foreach (var i in resultEntity)
+            {
+                var item = Items.Create(i.Id, i.Name, i.Description, i.Price, i.IdWareHouse, i.QuantityWareHouse);
+                result.Add(item.Value);
+            }
+            return result;
+        }
+
         public async Task<Guid> GetIdByNameAsync(string name, CancellationToken token)
         {
             ItemsEntity? itemEntity = await _context.ItemsTable

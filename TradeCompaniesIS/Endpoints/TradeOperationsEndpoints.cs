@@ -94,7 +94,7 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            }).RequireAuthorization("OnlyForProductSpec")
+            }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/item/add", async (
@@ -118,7 +118,7 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            }).RequireAuthorization("OnlyForProductSpec")
+            }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/warehouse", async (
@@ -139,7 +139,7 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            }).RequireAuthorization("OnlyForProductSpec")
+            }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/item", async (Guid id, 
@@ -159,7 +159,7 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            }).RequireAuthorization("OnlyForProductSpec")
+            }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/provider/add", async ( 
@@ -185,7 +185,7 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            }).RequireAuthorization("OnlyForProductSpec")
+            }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapDelete("/item/delete", async (Guid id,
@@ -205,7 +205,7 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            }).RequireAuthorization("OnlyForProductSpec")
+            }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/providers", async (
@@ -226,7 +226,7 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            }).RequireAuthorization("OnlyForProductSpec")
+            }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/country/id", async (
@@ -389,6 +389,21 @@ namespace TradeCompanyIS.Endpoints
                 {
                     var countries = await countriesService.GetAllAsync(token);
                     return Results.Ok(countries);
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
+            app.MapGet("/items", async (
+                [FromServices] IItemsService itemService, 
+                CancellationToken token) =>
+            {
+                try
+                {
+                    var items = await itemService.GetAllAsync(token);
+                    return Results.Ok(items);
                 }
                 catch
                 {
