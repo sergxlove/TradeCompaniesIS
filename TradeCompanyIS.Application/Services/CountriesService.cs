@@ -23,6 +23,10 @@ namespace TradeCompanyIS.Application.Services
         {
             return await _repository.GetIdByName(name, token);
         }
+        public async Task<List<Countries>> GetAllAsync(CancellationToken token)
+        {
+            return await _repository.GetAllAsync(token);
+        }
 
     }
 }

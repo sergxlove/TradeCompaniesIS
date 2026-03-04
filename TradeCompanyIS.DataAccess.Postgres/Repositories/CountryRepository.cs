@@ -42,5 +42,19 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
             if (countryEntity is null) return Guid.Empty;
             return countryEntity.Id;
         }
+
+        public async Task<List<Countries>> GetAllAsync(CancellationToken token)
+        {
+            List<CountriesEntity> resultEntity = await _context.CountriesTable
+                .AsNoTracking()
+                .ToListAsync(token);
+            List<Countries> result = new List<Countries>();
+            foreach(CountriesEntity c  in resultEntity)
+            {
+                var item = Countries.Create(c.Id, c.Name);
+                if(item.IsSuccess) result.Add(item.Value);
+            }
+            return result;
+        } 
     }
 }

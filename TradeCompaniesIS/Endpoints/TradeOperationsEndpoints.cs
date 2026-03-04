@@ -381,6 +381,21 @@ namespace TradeCompanyIS.Endpoints
                 }
             });
 
+            app.MapGet("/countries", async (
+                [FromServices] ICountriesService countriesService,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    var countries = await countriesService.GetAllAsync(token);
+                    return Results.Ok(countries);
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
             return app;
         }
     }
