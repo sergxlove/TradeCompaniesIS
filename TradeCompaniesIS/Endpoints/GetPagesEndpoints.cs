@@ -6,7 +6,7 @@
         {
             app.MapGet("/", () =>
             {
-                return Results.Redirect("wwwroot/Pages/login");
+                return Results.Redirect("/loginPage");
             }).RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/adminPage", async (HttpContext context) =>

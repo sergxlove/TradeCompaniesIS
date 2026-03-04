@@ -549,9 +549,6 @@
             <div class="nav-item" data-page="new-order">
                 🛒 Новый заказ
             </div>
-            <div class="nav-item" data-page="search">
-                🔍 Поиск товаров
-            </div>
             <div class="nav-item" data-page="availability">
                 📊 Наличие товаров
             </div>
@@ -572,68 +569,39 @@
                         <div class="profile-grid">
                             <div class="profile-field">
                                 <div class="profile-label">ФИО</div>
-                                <div class="profile-value" id="profile-name">Иванов Иван Иванович</div>
-                            </div>
-                            <div class="profile-field">
-                                <div class="profile-label">Дата рождения</div>
-                                <div class="profile-value" id="profile-birthdate">15.05.1970</div>
+                                <div class="profile-value" id="profile-name">Загрузка...</div>
                             </div>
                             <div class="profile-field">
                                 <div class="profile-label">Телефон</div>
-                                <div class="profile-value" id="profile-phone">+7 912 345 67 89</div>
+                                <div class="profile-value" id="profile-phone">Загрузка...</div>
                             </div>
                             <div class="profile-field">
                                 <div class="profile-label">Email</div>
-                                <div class="profile-value" id="profile-email">ivanov@example.com</div>
-                            </div>
-                            <div class="profile-field">
-                                <div class="profile-label">Страна</div>
-                                <div class="profile-value" id="profile-country">Россия</div>
+                                <div class="profile-value" id="profile-email">Загрузка...</div>
                             </div>
                             <div class="profile-field">
                                 <div class="profile-label">Адрес</div>
-                                <div class="profile-value" id="profile-address">Москва, ул. Ленина, д. 1</div>
+                                <div class="profile-value" id="profile-address">Загрузка...</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="edit-form" id="edit-profile-form">
                         <div class="form-group">
-                            <label>Фамилия</label>
-                            <input type="text" id="edit-lastname" value="Иванов">
-                        </div>
-                        <div class="form-group">
-                            <label>Имя</label>
-                            <input type="text" id="edit-firstname" value="Иван">
-                        </div>
-                        <div class="form-group">
-                            <label>Отчество</label>
-                            <input type="text" id="edit-middlename" value="Иванович">
-                        </div>
-                        <div class="form-group">
-                            <label>Дата рождения</label>
-                            <input type="date" id="edit-birthdate" value="1970-05-15">
+                            <label>ФИО</label>
+                            <input type="text" id="edit-name">
                         </div>
                         <div class="form-group">
                             <label>Телефон</label>
-                            <input type="tel" id="edit-phone" value="+79123456789">
+                            <input type="tel" id="edit-phone">
                         </div>
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" id="edit-email" value="ivanov@example.com">
-                        </div>
-                        <div class="form-group">
-                            <label>Страна</label>
-                            <select id="edit-country">
-                                <option value="1">Россия</option>
-                                <option value="2">США</option>
-                                <option value="3">Китай</option>
-                                <option value="4">Германия</option>
-                            </select>
+                            <input type="email" id="edit-email">
                         </div>
                         <div class="form-group">
                             <label>Адрес</label>
-                            <textarea id="edit-address" rows="2">Москва, ул. Ленина, д. 1</textarea>
+                            <textarea id="edit-address" rows="2"></textarea>
                         </div>
                         <div class="form-actions">
                             <button class="save-btn" onclick="saveProfile()">Сохранить</button>
@@ -653,13 +621,15 @@
                             <tr>
                                 <th>№ заказа</th>
                                 <th>Дата</th>
-                                <th>Товары</th>
-                                <th>Сумма</th>
+                                <th>Товар</th>
+                                <th>Количество</th>
                                 <th>Статус</th>
-                                <th>Действия</th>
                             </tr>
                         </thead>
                         <tbody id="orders-table-body">
+                            <tr>
+                                <td colspan="5" class="loading">Загрузка заказов...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -667,76 +637,29 @@
 
             <div class="page" id="new-order-page">
                 <h1 class="page-title">Новый заказ</h1>
-                <p class="page-subtitle">Сформируйте новый заказ из доступных товаров</p>
-
-                <div class="search-box">
-                    <input type="text" class="search-input" id="order-search" placeholder="Поиск товара по названию...">
-                    <button class="search-btn" onclick="searchProductsForOrder()">Найти</button>
-                </div>
+                <p class="page-subtitle">Создание нового заказа</p>
 
                 <div class="new-order-form">
-                    <h3>Товары в заказе</h3>
-                    <div class="order-items" id="order-items-container">
-                        <div class="loading">Выберите товары для заказа</div>
+                    <div class="form-group">
+                        <label>ID товара</label>
+                        <input type="text" id="order-item-id" placeholder="Введите ID товара">
                     </div>
-
-                    <div class="total">
-                        Итого: <span id="order-total">0</span> ₽
+                    <div class="form-group">
+                        <label>Количество</label>
+                        <input type="number" id="order-quantity" min="1" value="1">
                     </div>
-
                     <div class="form-actions">
                         <button class="save-btn" onclick="submitOrder()">Оформить заказ</button>
-                        <button class="cancel-btn" onclick="clearOrder()">Очистить</button>
                     </div>
-                </div>
-
-                <div class="products-grid" id="order-products-grid">
-                </div>
-            </div>
-
-            <div class="page" id="search-page">
-                <h1 class="page-title">Поиск товаров</h1>
-                <p class="page-subtitle">Найдите нужные товары по названию или описанию</p>
-
-                <div class="search-container">
-                    <div class="search-box">
-                        <input type="text" class="search-input" id="product-search" placeholder="Введите название товара...">
-                        <button class="search-btn" onclick="searchProducts()">Искать</button>
-                    </div>
-
-                    <div class="filters">
-                        <select class="filter-select" id="category-filter">
-                            <option value="">Все категории</option>
-                            <option value="equipment">Оборудование</option>
-                            <option value="tools">Инструменты</option>
-                            <option value="materials">Материалы</option>
-                        </select>
-
-                        <select class="filter-select" id="price-filter">
-                            <option value="">Любая цена</option>
-                            <option value="0-10000">До 10 000 ₽</option>
-                            <option value="10000-50000">10 000 - 50 000 ₽</option>
-                            <option value="50000+">От 50 000 ₽</option>
-                        </select>
-
-                        <select class="filter-select" id="stock-filter">
-                            <option value="">Любое наличие</option>
-                            <option value="available">Есть в наличии</option>
-                            <option value="low">Мало осталось</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="products-grid" id="search-results">
                 </div>
             </div>
 
             <div class="page" id="availability-page">
                 <h1 class="page-title">Наличие товаров</h1>
-                <p class="page-subtitle">Проверьте наличие и сроки поставки товаров</p>
+                <p class="page-subtitle">Проверьте наличие товара по ID</p>
 
                 <div class="search-box">
-                    <input type="text" class="search-input" id="availability-search" placeholder="Введите ID товара или название...">
+                    <input type="text" class="search-input" id="availability-search" placeholder="Введите ID товара...">
                     <button class="search-btn" onclick="checkAvailability()">Проверить</button>
                 </div>
 
@@ -748,137 +671,274 @@
     </div>
 
     <script>
-        const clientData = {
-            id: 1,
-            lastName: "Иванов",
-            firstName: "Иван",
-            middleName: "Иванович",
-            phone: "+7 912 345 67 89",
-            email: "ivanov@example.com",
-            country: "Россия",
-            birthdate: "1970-05-15",
-            address: "Москва, ул. Ленина, д. 1"
-        };
+        const API_BASE_URL = '';
+        let clientId = null;
+        let isSubmitting = false;
 
-        const productsData = [
-            {
-                id: 1,
-                name: "Промышленный вентилятор",
-                description: "Вентилятор с высокой производительностью для вентиляции",
-                category: "equipment",
-                price: 25000,
-                stock: 105,
-                markup: 25,
-                minStock: 10
-            },
-            {
-                id: 2,
-                name: "Кран-балка",
-                description: "Кран-балка с грузоподъемностью до 5 тонн",
-                category: "equipment",
-                price: 45000,
-                stock: 95,
-                markup: 40,
-                minStock: 5
-            },
-            {
-                id: 3,
-                name: "Лазерный уровень",
-                description: "Лазерный уровень для точного выравнивания конструкций",
-                category: "tools",
-                price: 15000,
-                stock: 115,
-                markup: 18,
-                minStock: 15
-            },
-            {
-                id: 4,
-                name: "Печь для термообработки",
-                description: "Печь для термообработки металлов, максимальная температура - 1200°C",
-                category: "equipment",
-                price: 120000,
-                stock: 75,
-                markup: 60,
-                minStock: 3
+        async function apiRequest(url, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                credentials: 'include'
+            };
+
+            if (body) {
+                options.body = JSON.stringify(body);
             }
-        ];
 
-        const ordersData = [
-            {
-                id: 1,
-                date: "2025-12-01",
-                items: [
-                    { productId: 2, name: "Кран-балка", quantity: 1, price: 45000 }
-                ],
-                total: 45000,
-                status: "processing"
-            },
-            {
-                id: 2,
-                date: "2025-12-01",
-                items: [
-                    { productId: 1, name: "Промышленный вентилятор", quantity: 2, price: 25000 },
-                    { productId: 3, name: "Лазерный уровень", quantity: 1, price: 15000 }
-                ],
-                total: 65000,
-                status: "processing"
+            const response = await fetch(url, options);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || 'Ошибка запроса');
             }
-        ];
 
-        let currentOrder = {
-            items: [],
-            total: 0
-        };
+            return response;
+        }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            initializeProfile();
-            initializeOrders();
-            initializeNavigation();
-            initializeProductSearch();
-            loadProductsForOrder();
-        });
+        async function loadClientProfile() {
+            if (!clientId) {
+                clientId = localStorage.getItem('clientId');
+                if (!clientId) {
+                    showError('ID клиента не найден');
+                    return;
+                }
+            }
 
-        function logout() {
+            try {
+                const response = await apiRequest(`/clients/${clientId}`, 'GET');
+                const client = await response.json();
+
+                document.getElementById('profile-name').textContent = client.nameClient || 'Не указано';
+                document.getElementById('profile-phone').textContent = client.numberPhone || 'Не указано';
+                document.getElementById('profile-email').textContent = client.email || 'Не указано';
+                document.getElementById('profile-address').textContent = client.addressDelivery || 'Не указано';
+
+                document.getElementById('edit-name').value = client.nameClient || '';
+                document.getElementById('edit-phone').value = client.numberPhone || '';
+                document.getElementById('edit-email').value = client.email || '';
+                document.getElementById('edit-address').value = client.addressDelivery || '';
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showError('Ошибка загрузки профиля');
+            }
+        }
+
+        async function loadClientOrders() {
+            const tbody = document.getElementById('orders-table-body');
+            tbody.innerHTML = '<tr><td colspan="5" class="loading"><div class="spinner"></div>Загрузка заказов...</td></tr>';
+
+            if (!clientId) {
+                clientId = localStorage.getItem('clientId');
+                if (!clientId) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="loading">ID клиента не найден</td></tr>';
+                    return;
+                }
+            }
+
+            try {
+                const response = await apiRequest(`/clients/orders/${clientId}`, 'GET');
+                const orders = await response.json();
+
+                tbody.innerHTML = '';
+
+                if (orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="loading">Нет заказов</td></tr>';
+                    return;
+                }
+
+                orders.forEach(order => {
+                    const row = document.createElement('tr');
+
+                    let statusText = 'В обработке';
+                    let statusClass = 'status-processing';
+
+                    row.innerHTML = `
+                            <td>#${order.id.toString().substring(0, 8)}</td>
+                            <td>${formatDate(order.dateOrder)}</td>
+                            <td>${order.idItem ? order.idItem.substring(0, 8) + '...' : '-'}</td>
+                            <td>${order.quantity || 1}</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        `;
+
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                tbody.innerHTML = '<tr><td colspan="5" class="loading">Ошибка загрузки заказов</td></tr>';
+            }
+        }
+
+        async function submitOrder() {
+            if (isSubmitting) return;
+
+            const itemId = document.getElementById('order-item-id').value.trim();
+            const quantity = parseInt(document.getElementById('order-quantity').value);
+
+            if (!itemId) {
+                alert('Введите ID товара');
+                return;
+            }
+
+            if (!quantity || quantity < 1) {
+                alert('Введите корректное количество');
+                return;
+            }
+
+            if (!clientId) {
+                clientId = localStorage.getItem('clientId');
+                if (!clientId) {
+                    alert('ID клиента не найден');
+                    return;
+                }
+            }
+
+            isSubmitting = true;
+
+            try {
+                await apiRequest('/client/order/create', 'POST', {
+                    idClients: clientId,
+                    idItem: itemId,
+                    quantity: quantity
+                });
+
+                alert('Заказ успешно оформлен!');
+
+                document.getElementById('order-item-id').value = '';
+                document.getElementById('order-quantity').value = '1';
+
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelector('.nav-item[data-page="orders"]').classList.add('active');
+                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                document.getElementById('orders-page').classList.add('active');
+
+                loadClientOrders();
+
+            } catch (error) {
+                alert(error.message || 'Ошибка при оформлении заказа');
+            } finally {
+                isSubmitting = false;
+            }
+        }
+
+        async function checkAvailability() {
+            const searchValue = document.getElementById('availability-search').value.trim();
+            const resultsContainer = document.getElementById('availability-results');
+
+            if (!searchValue) {
+                resultsContainer.innerHTML = '<div class="loading">Введите ID товара</div>';
+                return;
+            }
+
+            resultsContainer.innerHTML = '<div class="loading"><div class="spinner"></div>Проверка...</div>';
+
+            try {
+                const response = await apiRequest(`/item?id=${searchValue}`, 'GET');
+                const product = await response.json();
+
+                let stockStatus, stockClass;
+
+                if (product.quantity > 0) {
+                    stockStatus = 'В наличии';
+                    stockClass = 'stock-available';
+                } else {
+                    stockStatus = 'Нет в наличии';
+                    stockClass = 'stock-out';
+                }
+
+                resultsContainer.innerHTML = `
+                        <div class="availability-card">
+                            <h3>${product.name || 'Товар'}</h3>
+                            <p>${product.description || 'Описание отсутствует'}</p>
+                            <div class="availability-info">
+                                <div>
+                                    <div class="profile-label">Остаток</div>
+                                    <div class="profile-value">${product.quantity || 0} шт.</div>
+                                </div>
+                                <div>
+                                    <div class="profile-label">Статус</div>
+                                    <div class="profile-value"><span class="stock-badge ${stockClass}">${stockStatus}</span></div>
+                                </div>
+                                <div>
+                                    <div class="profile-label">Цена</div>
+                                    <div class="profile-value">${formatCurrency(product.price || 0)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            } catch (error) {
+                console.error('Error checking availability:', error);
+                resultsContainer.innerHTML = '<div class="loading">Товар не найден</div>';
+            }
+        }
+
+        async function saveProfile() {
+            if (isSubmitting) return;
+
+            const clientData = {
+                nameClient: document.getElementById('edit-name').value,
+                numberPhone: document.getElementById('edit-phone').value,
+                email: document.getElementById('edit-email').value,
+                idCountry: 1,
+                addressDelivery: document.getElementById('edit-address').value
+            };
+
+            if (!clientData.nameClient || !clientData.numberPhone || !clientData.email) {
+                alert('Заполните обязательные поля');
+                return;
+            }
+
+            isSubmitting = true;
+
+            try {
+                await apiRequest('/client/create', 'POST', clientData);
+                alert('Изменения сохранены успешно!');
+                toggleEditProfile();
+                loadClientProfile();
+            } catch (error) {
+                alert(error.message || 'Ошибка при сохранении');
+            } finally {
+                isSubmitting = false;
+            }
+        }
+
+        async function logout() {
             if (confirm("Вы уверены, что хотите выйти?")) {
-                alert("Вы вышли из системы");
+                try {
+                    await apiRequest('/logout', 'GET');
+                    localStorage.removeItem('clientId');
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+                window.location.href = 'login.html';
             }
         }
 
         function initializeNavigation() {
             const navItems = document.querySelectorAll('.nav-item');
-
             navItems.forEach(item => {
                 item.addEventListener('click', function () {
                     navItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
 
                     const pageId = this.getAttribute('data-page');
-
-                    document.querySelectorAll('.page').forEach(page => {
-                        page.classList.remove('active');
-                    });
-
+                    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
                     document.getElementById(pageId + '-page').classList.add('active');
+
+                    switch (pageId) {
+                        case 'profile':
+                            loadClientProfile();
+                            break;
+                        case 'orders':
+                            loadClientOrders();
+                            break;
+                    }
                 });
             });
-        }
-
-        function initializeProfile() {
-            document.getElementById('profile-name').textContent =
-                `${clientData.lastName} ${clientData.firstName} ${clientData.middleName}`;
-            document.getElementById('profile-birthdate').textContent = formatDate(clientData.birthdate);
-            document.getElementById('profile-phone').textContent = clientData.phone;
-            document.getElementById('profile-email').textContent = clientData.email;
-            document.getElementById('profile-country').textContent = clientData.country;
-            document.getElementById('profile-address').textContent = clientData.address;
-
-            document.getElementById('edit-lastname').value = clientData.lastName;
-            document.getElementById('edit-firstname').value = clientData.firstName;
-            document.getElementById('edit-middlename').value = clientData.middleName;
-            document.getElementById('edit-birthdate').value = clientData.birthdate;
-            document.getElementById('edit-phone').value = clientData.phone;
-            document.getElementById('edit-email').value = clientData.email;
-            document.getElementById('edit-address').value = clientData.address;
         }
 
         function toggleEditProfile() {
@@ -897,401 +957,8 @@
             }
         }
 
-        function saveProfile() {
-            const newData = {
-                lastName: document.getElementById('edit-lastname').value,
-                firstName: document.getElementById('edit-firstname').value,
-                middleName: document.getElementById('edit-middlename').value,
-                birthdate: document.getElementById('edit-birthdate').value,
-                phone: document.getElementById('edit-phone').value,
-                email: document.getElementById('edit-email').value,
-                country: document.getElementById('edit-country').options[document.getElementById('edit-country').selectedIndex].text,
-                address: document.getElementById('edit-address').value
-            };
-
-            Object.assign(clientData, newData);
-
-            initializeProfile();
-
-            toggleEditProfile();
-
-            alert('Изменения сохранены успешно!');
-        }
-
-        function initializeOrders() {
-            const tbody = document.getElementById('orders-table-body');
-            tbody.innerHTML = '';
-
-            ordersData.forEach(order => {
-                const row = document.createElement('tr');
-
-                const itemsList = order.items.map(item =>
-                    `${item.name} (${item.quantity} шт.)`
-                ).join(', ');
-
-                let statusText, statusClass;
-                switch (order.status) {
-                    case 'delivered':
-                        statusText = 'Доставлен';
-                        statusClass = 'status-delivered';
-                        break;
-                    case 'processing':
-                        statusText = 'В обработке';
-                        statusClass = 'status-processing';
-                        break;
-                    case 'pending':
-                        statusText = 'Ожидает';
-                        statusClass = 'status-pending';
-                        break;
-                    default:
-                        statusText = 'Неизвестно';
-                        statusClass = 'status-pending';
-                }
-
-                row.innerHTML = `
-                        <td>#${order.id.toString().padStart(5, '0')}</td>
-                        <td>${formatDate(order.date)}</td>
-                        <td>${itemsList}</td>
-                        <td>${formatCurrency(order.total)}</td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                        <td>
-                            <button class="action-btn" onclick="repeatOrder(${order.id})">
-                                Повторить
-                            </button>
-                        </td>
-                    `;
-
-                tbody.appendChild(row);
-            });
-        }
-
-        function repeatOrder(orderId) {
-            const order = ordersData.find(o => o.id === orderId);
-            if (order) {
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                document.querySelector('.nav-item[data-page="new-order"]').classList.add('active');
-
-                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-                document.getElementById('new-order-page').classList.add('active');
-
-                currentOrder.items = [...order.items];
-                updateOrderDisplay();
-
-                alert(`Заказ #${orderId} добавлен для повторения`);
-            }
-        }
-
-        function loadProductsForOrder() {
-            const container = document.getElementById('order-products-grid');
-            container.innerHTML = '';
-
-            productsData.forEach(product => {
-                const card = createProductCard(product, true);
-                container.appendChild(card);
-            });
-        }
-
-        function searchProductsForOrder() {
-            const searchTerm = document.getElementById('order-search').value.toLowerCase();
-            const container = document.getElementById('order-products-grid');
-
-            if (!searchTerm) {
-                loadProductsForOrder();
-                return;
-            }
-
-            container.innerHTML = '';
-
-            const filteredProducts = productsData.filter(product =>
-                product.name.toLowerCase().includes(searchTerm) ||
-                product.description.toLowerCase().includes(searchTerm)
-            );
-
-            if (filteredProducts.length === 0) {
-                container.innerHTML = '<div class="loading">Товары не найдены</div>';
-                return;
-            }
-
-            filteredProducts.forEach(product => {
-                const card = createProductCard(product, true);
-                container.appendChild(card);
-            });
-        }
-
-        function addToOrder(productId, quantity = 1) {
-            const product = productsData.find(p => p.id === productId);
-            if (!product) return;
-
-            const existingItem = currentOrder.items.find(item => item.productId === productId);
-
-            if (existingItem) {
-                existingItem.quantity += quantity;
-            } else {
-                currentOrder.items.push({
-                    productId: product.id,
-                    name: product.name,
-                    price: product.price,
-                    quantity: quantity
-                });
-            }
-
-            updateOrderDisplay();
-        }
-
-        function removeFromOrder(productId) {
-            currentOrder.items = currentOrder.items.filter(item => item.productId !== productId);
-            updateOrderDisplay();
-        }
-
-        function updateOrderDisplay() {
-            const container = document.getElementById('order-items-container');
-            const totalElement = document.getElementById('order-total');
-
-            if (currentOrder.items.length === 0) {
-                container.innerHTML = '<div class="loading">Выберите товары для заказа</div>';
-                totalElement.textContent = '0';
-                return;
-            }
-
-            let total = 0;
-
-            container.innerHTML = '';
-
-            currentOrder.items.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-
-                const itemElement = document.createElement('div');
-                itemElement.className = 'order-item';
-                itemElement.innerHTML = `
-                        <div>
-                            <strong>${item.name}</strong><br>
-                            <small>${formatCurrency(item.price)} × ${item.quantity} шт.</small>
-                        </div>
-                        <div>
-                            <strong>${formatCurrency(itemTotal)}</strong>
-                            <span class="remove-item" onclick="removeFromOrder(${item.productId})">×</span>
-                        </div>
-                    `;
-
-                container.appendChild(itemElement);
-            });
-
-            totalElement.textContent = formatCurrency(total);
-        }
-
-        function submitOrder() {
-            if (currentOrder.items.length === 0) {
-                alert('Добавьте товары в заказ');
-                return;
-            }
-
-            const newOrder = {
-                id: ordersData.length + 1,
-                date: new Date().toISOString().split('T')[0],
-                items: [...currentOrder.items],
-                total: currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-                status: 'pending'
-            };
-
-            ordersData.unshift(newOrder);
-
-            initializeOrders();
-
-            clearOrder();
-
-            alert(`Заказ #${newOrder.id} успешно оформлен!`);
-        }
-
-        function clearOrder() {
-            currentOrder.items = [];
-            updateOrderDisplay();
-        }
-
-        function checkAvailability() {
-            const searchValue = document.getElementById('availability-search').value.trim();
-            const resultsContainer = document.getElementById('availability-results');
-
-            if (!searchValue) {
-                resultsContainer.innerHTML = '<div class="loading">Введите ID товара или название для проверки</div>';
-                return;
-            }
-
-            let product;
-
-            if (!isNaN(searchValue)) {
-                product = productsData.find(p => p.id === parseInt(searchValue));
-            } else {
-                product = productsData.find(p =>
-                    p.name.toLowerCase().includes(searchValue.toLowerCase())
-                );
-            }
-
-            if (!product) {
-                resultsContainer.innerHTML = '<div class="loading">Товар не найден</div>';
-                return;
-            }
-
-            let stockStatus, stockClass, deliveryTime;
-
-            if (product.stock > product.minStock * 2) {
-                stockStatus = 'В наличии';
-                stockClass = 'stock-available';
-                deliveryTime = '1-2 дня';
-            } else if (product.stock > 0) {
-                stockStatus = 'Мало осталось';
-                stockClass = 'stock-low';
-                deliveryTime = '3-5 дней';
-            } else {
-                stockStatus = 'Нет в наличии';
-                stockClass = 'stock-out';
-                deliveryTime = 'ожидается поставка';
-            }
-
-            resultsContainer.innerHTML = `
-                    <div class="availability-card">
-                        <h3>${product.name}</h3>
-                        <p>${product.description}</p>
-
-                        <div class="availability-info">
-                            <div>
-                                <div class="profile-label">Текущий остаток</div>
-                                <div class="profile-value">${product.stock} шт.</div>
-                            </div>
-                            <div>
-                                <div class="profile-label">Статус</div>
-                                <div class="profile-value"><span class="stock-badge ${stockClass}">${stockStatus}</span></div>
-                            </div>
-                            <div>
-                                <div class="profile-label">Срок поставки</div>
-                                <div class="profile-value">${deliveryTime}</div>
-                            </div>
-                            <div>
-                                <div class="profile-label">Цена</div>
-                                <div class="profile-value">${formatCurrency(product.price)}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-        }
-
-        function initializeProductSearch() {
-            displaySearchResults(productsData);
-        }
-
-        function searchProducts() {
-            const searchTerm = document.getElementById('product-search').value.toLowerCase();
-            const categoryFilter = document.getElementById('category-filter').value;
-            const priceFilter = document.getElementById('price-filter').value;
-            const stockFilter = document.getElementById('stock-filter').value;
-
-            let results = productsData.filter(product => {
-                if (searchTerm && !product.name.toLowerCase().includes(searchTerm) &&
-                    !product.description.toLowerCase().includes(searchTerm)) {
-                    return false;
-                }
-
-                if (categoryFilter && product.category !== categoryFilter) {
-                    return false;
-                }
-
-                if (priceFilter) {
-                    const [min, max] = priceFilter === '50000+' ? [50000, Infinity] : priceFilter.split('-').map(Number);
-                    if (product.price < min || product.price > max) {
-                        return false;
-                    }
-                }
-
-                if (stockFilter) {
-                    if (stockFilter === 'available' && product.stock <= 0) {
-                        return false;
-                    }
-                    if (stockFilter === 'low' && product.stock > 10) {
-                        return false;
-                    }
-                }
-
-                return true;
-            });
-
-            displaySearchResults(results);
-        }
-
-        function displaySearchResults(products) {
-            const container = document.getElementById('search-results');
-
-            if (products.length === 0) {
-                container.innerHTML = '<div class="loading">Товары не найдены</div>';
-                return;
-            }
-
-            container.innerHTML = '';
-
-            products.forEach(product => {
-                const card = createProductCard(product, false);
-                container.appendChild(card);
-            });
-        }
-
-        function createProductCard(product, forOrder = false) {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-
-            let stockStatus, stockClass;
-            if (product.stock > 10) {
-                stockStatus = 'В наличии';
-                stockClass = 'stock-available';
-            } else if (product.stock > 0) {
-                stockStatus = `Осталось: ${product.stock} шт.`;
-                stockClass = 'stock-low';
-            } else {
-                stockStatus = 'Нет в наличии';
-                stockClass = 'stock-out';
-            }
-
-            card.innerHTML = `
-                    <div class="product-header">
-                        <div>
-                            <div class="product-title">${product.name}</div>
-                            <div class="product-price">${formatCurrency(product.price)}</div>
-                        </div>
-                        <span class="stock-badge ${stockClass}">${stockStatus}</span>
-                    </div>
-                    <div class="product-description">${product.description}</div>
-                    <div class="product-stock">
-                        <div>
-                            <small>ID: ${product.id}</small>
-                        </div>
-                        ${forOrder ? `
-                        <button class="order-btn"
-                                onclick="addToOrder(${product.id})"
-                                ${product.stock === 0 ? 'disabled' : ''}>
-                            Добавить в заказ
-                        </button>
-                        ` : `
-                        <button class="order-btn"
-                                onclick="checkProductAvailability(${product.id})">
-                            Проверить наличие
-                        </button>
-                        `}
-                    </div>
-                `;
-
-            return card;
-        }
-
-        function checkProductAvailability(productId) {
-            document.getElementById('availability-search').value = productId;
-            checkAvailability();
-
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.querySelector('.nav-item[data-page="availability"]').classList.add('active');
-
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.getElementById('availability-page').classList.add('active');
-        }
-
         function formatDate(dateString) {
+            if (!dateString) return '-';
             const date = new Date(dateString);
             return date.toLocaleDateString('ru-RU');
         }
@@ -1303,6 +970,29 @@
                 minimumFractionDigits: 0
             }).format(amount);
         }
+
+        function showError(message) {
+            alert(message);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeNavigation();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            clientId = urlParams.get('clientId');
+
+            if (clientId) {
+                localStorage.setItem('clientId', clientId);
+            } else {
+                clientId = localStorage.getItem('clientId');
+            }
+
+            if (clientId) {
+                loadClientProfile();
+            } else {
+                showError('ID клиента не найден. Пожалуйста, войдите в систему.');
+            }
+        });
     </script>
 </body>
 </html>
