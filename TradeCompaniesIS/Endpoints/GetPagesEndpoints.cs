@@ -46,7 +46,7 @@
             {
                 context.Response.ContentType = "text/html; charset=utf-8";
                 await context.Response.SendFileAsync("wwwroot/Pages/sallerPage.html");
-            }).RequireAuthorization("OnlyForProductSpec")
+            }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
             return app;

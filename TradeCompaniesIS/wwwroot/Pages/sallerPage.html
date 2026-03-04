@@ -311,32 +311,6 @@
             color: var(--text-primary);
         }
 
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-        }
-
-            .tab.active {
-                border-bottom-color: var(--accent);
-                color: var(--accent);
-                font-weight: 600;
-            }
-
-        .tab-content {
-            display: none;
-        }
-
-            .tab-content.active {
-                display: block;
-            }
-
         .modal {
             display: none;
             position: fixed;
@@ -424,7 +398,7 @@
         </div>
         <div class="user-info">
             <span class="user-role">Товаровед</span>
-            <button class="logout-btn" onclick="logout()">Выйти</button>
+            <button class="logout-btn" onclick="window.logout()">Выйти</button>
         </div>
     </div>
 
@@ -451,8 +425,8 @@
 
                 <div class="search-container">
                     <input type="text" class="search-input" id="product-search" placeholder="Поиск товаров по названию...">
-                    <button class="btn btn-primary" onclick="searchProducts()">Поиск</button>
-                    <button class="btn btn-success" onclick="showAddProductModal()">+ Добавить товар</button>
+                    <button class="btn btn-primary" onclick="window.searchProducts()">Поиск</button>
+                    <button class="btn btn-success" onclick="window.showAddProductModal()">+ Добавить товар</button>
                 </div>
 
                 <div class="table-container">
@@ -462,12 +436,16 @@
                                 <th>ID</th>
                                 <th>Наименование</th>
                                 <th>Описание</th>
-                                <th>Наценка</th>
-                                <th>Запасы</th>
+                                <th>Цена</th>
+                                <th>Количество</th>
+                                <th>ID склада</th>
                                 <th>Действия</th>
                             </tr>
                         </thead>
                         <tbody id="products-table">
+                            <tr>
+                                <td colspan="7" class="loading">Загрузка товаров...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -482,14 +460,14 @@
                         <div class="form-group">
                             <label for="supply-supplier" class="required">Поставщик</label>
                             <select id="supply-supplier">
-                                <option value="">Выберите поставщика...</option>
+                                <option value="">Загрузка поставщиков...</option>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label for="supply-warehouse" class="required">Склад</label>
                             <select id="supply-warehouse">
-                                <option value="">Выберите склад...</option>
+                                <option value="">Загрузка складов...</option>
                             </select>
                         </div>
                     </div>
@@ -520,7 +498,7 @@
                         <div class="form-group">
                             <label for="add-product-select">Добавить товар</label>
                             <select id="add-product-select">
-                                <option value="">Выберите товар...</option>
+                                <option value="">Загрузка товаров...</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -533,11 +511,11 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" onclick="addProductToSupply()">Добавить товар</button>
+                    <button class="btn btn-primary" onclick="window.addProductToSupply()">Добавить товар</button>
 
                     <div class="form-actions">
-                        <button class="btn btn-success" onclick="createSupply()">Создать поставку</button>
-                        <button class="btn" onclick="clearSupplyForm()">Очистить</button>
+                        <button class="btn btn-success" onclick="window.createSupply()">Создать поставку</button>
+                        <button class="btn" onclick="window.clearSupplyForm()">Очистить</button>
                     </div>
                 </div>
             </div>
@@ -547,7 +525,7 @@
                 <p class="page-subtitle">Список поставщиков и добавление новых</p>
 
                 <div class="search-container">
-                    <button class="btn btn-success" onclick="showAddSupplierModal()">+ Добавить поставщика</button>
+                    <button class="btn btn-success" onclick="window.showAddSupplierModal()">+ Добавить поставщика</button>
                 </div>
 
                 <div class="table-container">
@@ -556,12 +534,15 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Название</th>
-                                <th>Страна</th>
                                 <th>Телефон</th>
+                                <th>Страна</th>
                                 <th>Адрес</th>
                             </tr>
                         </thead>
                         <tbody id="suppliers-table">
+                            <tr>
+                                <td colspan="5" class="loading">Загрузка поставщиков...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -569,20 +550,22 @@
 
             <div class="page" id="delete-page">
                 <h1 class="page-title">Удаление товаров</h1>
-                <p class="page-subtitle">Безопасное удаление непопулярных товаров</p>
+                <p class="page-subtitle">Удаление товаров из каталога</p>
 
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th>ID товара</th>
+                                <th>ID</th>
                                 <th>Наименование</th>
-                                <th>Покупки</th>
-                                <th>Статус</th>
+                                <th>Количество</th>
                                 <th>Действия</th>
                             </tr>
                         </thead>
                         <tbody id="delete-table">
+                            <tr>
+                                <td colspan="4" class="loading">Загрузка товаров...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -594,7 +577,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Добавление товара</h2>
-                <button class="close-modal" onclick="closeModal('addProductModal')">×</button>
+                <button class="close-modal" onclick="window.closeModal('addProductModal')">×</button>
             </div>
 
             <div class="form-group">
@@ -609,14 +592,25 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label class="required">Наценка (%)</label>
-                    <input type="number" id="new-product-markup" min="0" max="500" value="25">
+                    <label class="required">Цена</label>
+                    <input type="number" id="new-product-price" min="1" value="1000">
+                </div>
+                <div class="form-group">
+                    <label class="required">Количество</label>
+                    <input type="number" id="new-product-quantity" min="0" value="0">
                 </div>
             </div>
 
+            <div class="form-group">
+                <label class="required">Склад</label>
+                <select id="new-product-warehouse">
+                    <option value="">Загрузка складов...</option>
+                </select>
+            </div>
+
             <div class="form-actions">
-                <button class="btn btn-success" onclick="addNewProduct()">Добавить</button>
-                <button class="btn" onclick="closeModal('addProductModal')">Отмена</button>
+                <button class="btn btn-success" onclick="window.addNewProduct()">Добавить</button>
+                <button class="btn" onclick="window.closeModal('addProductModal')">Отмена</button>
             </div>
         </div>
     </div>
@@ -625,7 +619,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Добавление поставщика</h2>
-                <button class="close-modal" onclick="closeModal('addSupplierModal')">×</button>
+                <button class="close-modal" onclick="window.closeModal('addSupplierModal')">×</button>
             </div>
 
             <div class="form-group">
@@ -638,15 +632,11 @@
                 <input type="text" id="new-supplier-phone" placeholder="+7 123 456 78 90">
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="required">Страна</label>
-                    <select id="new-supplier-country">
-                        <option value="1">Россия</option>
-                        <option value="2">США</option>
-                        <option value="3">Китай</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label class="required">Страна</label>
+                <select id="new-supplier-country">
+                    <option value="">Загрузка стран...</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -655,424 +645,663 @@
             </div>
 
             <div class="form-actions">
-                <button class="btn btn-success" onclick="addNewSupplier()">Добавить</button>
-                <button class="btn" onclick="closeModal('addSupplierModal')">Отмена</button>
+                <button class="btn btn-success" onclick="window.addNewSupplier()">Добавить</button>
+                <button class="btn" onclick="window.closeModal('addSupplierModal')">Отмена</button>
             </div>
         </div>
     </div>
 
     <script>
-        const mockData = {
-            products: [
-                { id: 1, name: "Промышленный вентилятор", description: "Вентилятор с высокой производительностью", markup: 25, stock: 105, purchases: 1 },
-                { id: 2, name: "Кран-балка", description: "Кран-балка с грузоподъемностью до 5 тонн", markup: 40, stock: 95, purchases: 5 },
-                { id: 3, name: "Лазерный уровень", description: "Лазерный уровень для точного выравнивания", markup: 18, stock: 115, purchases: 3 },
-                { id: 4, name: "Печь для термообработки", description: "Печь для термообработки металлов", markup: 60, stock: 75, purchases: 0 },
-                { id: 5, name: "Анализатор газов", description: "Анализатор газов для контроля выбросов", markup: 90, stock: 1, purchases: 1 }
-            ],
+        (function () {
+            // Конфигурация API
+            let isSubmitting = false;
+            let allProducts = [];
+            let allSuppliers = [];
+            let allWarehouses = [];
+            let allCountries = [];
+            let allWarehouseAddresses = [];
 
-            suppliers: [
-                { id: 1, name: "Торговая компания 'Север'", country: "Россия", phone: "+7 123 456 78 90", address: "Москва, ул. Примерная, д. 1" },
-                { id: 2, name: "Global Supplies Inc.", country: "США", phone: "+1 234 567 89 01", address: "Нью-Йорк, ул. Примерная, д. 2" },
-                { id: 3, name: "China Trade Co.", country: "Китай", phone: "+86 123 456 78 90", address: "Пекин, ул. Примерная, д. 3" }
-            ],
-
-            warehouses: [
-                { id: 1, address: "Москва, ул. Ленина, д. 1", country: "Россия" },
-                { id: 2, address: "Санкт-Петербург, ул. Невский пр., д. 2", country: "Россия" }
-            ],
-
-            newPrices: [
-                { productName: "Промышленный вентилятор", currentPrice: 25000, newPrice: 26500 },
-                { productName: "Кран-балка", currentPrice: 45000, newPrice: 43000 }
-            ]
-        };
-
-        let currentSupply = {
-            items: [],
-            supplierId: null,
-            warehouseId: null
-        };
-
-        document.addEventListener('DOMContentLoaded', function () {
-            initializeNavigation();
-
-            loadProducts();
-            loadSuppliers();
-            loadDeleteProducts();
-
-            populateSelects();
-        });
-
-        function initializeNavigation() {
-            const navItems = document.querySelectorAll('.nav-item');
-
-            navItems.forEach(item => {
-                item.addEventListener('click', function () {
-                    navItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-
-                    const pageId = this.getAttribute('data-page');
-                    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-                    document.getElementById(pageId + '-page').classList.add('active');
-                });
-            });
-        }
-
-        function showModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function showAddProductModal() {
-            showModal('addProductModal');
-        }
-
-        function showAddSupplierModal() {
-            showModal('addSupplierModal');
-        }
-
-        function loadProducts() {
-            const tbody = document.getElementById('products-table');
-            tbody.innerHTML = '';
-
-            mockData.products.forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                        <td>${product.id}</td>
-                        <td><strong>${product.name}</strong></td>
-                        <td>${product.description}</td>
-                        <td><span class="status-badge status-info">${product.markup}%</span></td>
-                        <td>${product.stock} шт.</td>
-                        <td>
-                            <button class="btn btn-small btn-primary" onclick="editProduct(${product.id})">Изменить</button>
-                        </td>
-                    `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function searchProducts() {
-            const searchTerm = document.getElementById('product-search').value.toLowerCase();
-
-            const filtered = mockData.products.filter(product =>
-                product.name.toLowerCase().includes(searchTerm) ||
-                product.description.toLowerCase().includes(searchTerm)
-            );
-
-            const tbody = document.getElementById('products-table');
-            tbody.innerHTML = '';
-
-            filtered.forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                        <td>${product.id}</td>
-                        <td><strong>${product.name}</strong></td>
-                        <td>${product.description}</td>
-                        <td><span class="status-badge status-info">${product.markup}%</span></td>
-                        <td>${product.stock} шт.</td>
-                        <td>
-                            <button class="btn btn-small btn-primary" onclick="editProduct(${product.id})">Изменить</button>
-                        </td>
-                    `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function addNewProduct() {
-            const name = document.getElementById('new-product-name').value;
-            const description = document.getElementById('new-product-description').value;
-            const markup = parseInt(document.getElementById('new-product-markup').value);
-
-            if (!name || !description) {
-                alert('Заполните обязательные поля');
-                return;
-            }
-
-            const newProduct = {
-                id: Math.max(...mockData.products.map(p => p.id)) + 1,
-                name: name,
-                description: description,
-                markup: markup,
-                stock: 0,
-                purchases: 0
+            // Состояние поставки
+            let currentSupply = {
+                items: []
             };
 
-            mockData.products.push(newProduct);
-            loadProducts();
-            closeModal('addProductModal');
-            alert(`Товар "${name}" добавлен`);
-        }
+            // API функции
+            async function apiRequest(url, method = 'GET', body = null) {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'include'
+                };
 
-        function editProduct(productId) {
-            const product = mockData.products.find(p => p.id === productId);
-            if (product) {
-                const newMarkup = prompt(`Введите новую наценку для товара "${product.name}":`, product.markup);
-                if (newMarkup !== null) {
-                    const markup = parseInt(newMarkup);
-                    if (!isNaN(markup) && markup >= 0 && markup <= 500) {
-                        product.markup = markup;
-                        loadProducts();
-                        alert('Наценка изменена');
-                    } else {
-                        alert('Введите корректное значение наценки (0-500%)');
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+
+                console.log(`Making ${method} request to ${url}`, body);
+
+                const response = await fetch(url, options);
+
+                if (!response.ok) {
+                    let errorMessage = `Ошибка ${response.status}: ${response.statusText}`;
+                    try {
+                        const errorText = await response.text();
+                        if (errorText) {
+                            errorMessage = errorText;
+                        }
+                    } catch (e) {
+                        // Ignore parsing errors
                     }
+                    throw new Error(errorMessage);
+                }
+
+                return response;
+            }
+
+            // Загрузка всех товаров (GET /items)
+            async function loadAllProducts() {
+                try {
+                    const response = await apiRequest('/items', 'GET');
+                    allProducts = await response.json();
+                    return allProducts;
+                } catch (error) {
+                    console.error('Error loading products:', error);
+                    allProducts = [];
+                    return [];
                 }
             }
-        }
 
-        function populateSelects() {
-            const supplierSelect = document.getElementById('supply-supplier');
-            supplierSelect.innerHTML = '<option value="">Выберите поставщика...</option>';
-            mockData.suppliers.forEach(supplier => {
-                const option = document.createElement('option');
-                option.value = supplier.id;
-                option.textContent = `${supplier.name} (${supplier.country})`;
-                supplierSelect.appendChild(option);
-            });
+            // Загрузка товаров для отображения
+            async function loadProducts() {
+                const tbody = document.getElementById('products-table');
+                tbody.innerHTML = '<tr><td colspan="7" class="loading"><div class="spinner"></div>Загрузка товаров...</td></tr>';
 
-            const warehouseSelect = document.getElementById('supply-warehouse');
-            warehouseSelect.innerHTML = '<option value="">Выберите склад...</option>';
-            mockData.warehouses.forEach(warehouse => {
-                const option = document.createElement('option');
-                option.value = warehouse.id;
-                option.textContent = `${warehouse.address}`;
-                warehouseSelect.appendChild(option);
-            });
+                try {
+                    await loadAllProducts();
 
-            const productSelect = document.getElementById('add-product-select');
-            productSelect.innerHTML = '<option value="">Выберите товар...</option>';
-            mockData.products.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = `${product.name} (ID: ${product.id})`;
-                productSelect.appendChild(option);
-            });
-        }
+                    if (allProducts.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7" class="loading">Нет товаров</td></tr>';
+                        return;
+                    }
 
-        function addProductToSupply() {
-            const productId = parseInt(document.getElementById('add-product-select').value);
-            const quantity = parseInt(document.getElementById('add-product-quantity').value);
-            const price = parseInt(document.getElementById('add-product-price').value);
-
-            if (!productId || !quantity || !price) {
-                alert('Заполните все поля');
-                return;
+                    displayProducts(allProducts);
+                } catch (error) {
+                    console.error('Error loading products:', error);
+                    tbody.innerHTML = '<tr><td colspan="7" class="loading">Ошибка загрузки товаров</td></tr>';
+                }
             }
 
-            if (price < 10) {
-                alert('Цена поставки не может быть ниже 10 рублей');
-                return;
-            }
+            function displayProducts(products) {
+                const tbody = document.getElementById('products-table');
+                tbody.innerHTML = '';
 
-            const product = mockData.products.find(p => p.id === productId);
-            if (!product) {
-                alert('Товар не найден');
-                return;
-            }
-
-            const existingItem = currentSupply.items.find(item => item.productId === productId);
-
-            if (existingItem) {
-                existingItem.quantity += quantity;
-            } else {
-                currentSupply.items.push({
-                    productId: productId,
-                    productName: product.name,
-                    quantity: quantity,
-                    price: price
+                products.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                            <td>${product.id.substring(0, 8)}...</td>
+                            <td><strong>${product.name}</strong></td>
+                            <td>${product.description || '-'}</td>
+                            <td>${formatCurrency(product.price)}</td>
+                            <td>${product.quantityWareHouse} шт.</td>
+                            <td>${product.idWareHouse.substring(0, 8)}...</td>
+                            <td>
+                                <button class="btn btn-small btn-primary" onclick="window.editProduct('${product.id}')">Изменить цену</button>
+                            </td>
+                        `;
+                    tbody.appendChild(row);
                 });
             }
 
-            updateSupplyItemsDisplay();
+            // Поиск товаров
+            function searchProducts() {
+                const searchTerm = document.getElementById('product-search').value.toLowerCase();
 
-            document.getElementById('add-product-select').value = '';
-            document.getElementById('add-product-quantity').value = 1;
-            document.getElementById('add-product-price').value = '';
-        }
-
-        function updateSupplyItemsDisplay() {
-            const tbody = document.getElementById('supply-items');
-            tbody.innerHTML = '';
-
-            if (currentSupply.items.length === 0) {
-                tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="loading">Добавьте товары в поставку</td>
-                        </tr>
-                    `;
-                return;
-            }
-
-            currentSupply.items.forEach((item, index) => {
-                const total = item.quantity * item.price;
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                        <td>${item.productName}</td>
-                        <td>${item.quantity} шт.</td>
-                        <td>${formatCurrency(item.price)}</td>
-                        <td>${formatCurrency(total)}</td>
-                        <td><button class="btn btn-small btn-danger" onclick="removeSupplyItem(${index})">×</button></td>
-                    `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function removeSupplyItem(index) {
-            currentSupply.items.splice(index, 1);
-            updateSupplyItemsDisplay();
-        }
-
-        function createSupply() {
-            const supplierId = parseInt(document.getElementById('supply-supplier').value);
-            const warehouseId = parseInt(document.getElementById('supply-warehouse').value);
-
-            if (!supplierId || !warehouseId) {
-                alert('Выберите поставщика и склад');
-                return;
-            }
-
-            if (currentSupply.items.length === 0) {
-                alert('Добавьте хотя бы один товар в поставку');
-                return;
-            }
-
-            for (const item of currentSupply.items) {
-                if (item.price < 10) {
-                    alert(`Цена товара "${item.productName}" ниже минимальной (10 руб.)`);
+                if (!searchTerm) {
+                    displayProducts(allProducts);
                     return;
                 }
+
+                const filtered = allProducts.filter(product =>
+                    product.name.toLowerCase().includes(searchTerm) ||
+                    (product.description && product.description.toLowerCase().includes(searchTerm))
+                );
+
+                displayProducts(filtered);
             }
 
-            currentSupply.items.forEach(item => {
-                const product = mockData.products.find(p => p.id === item.productId);
-                if (product) {
-                    product.stock += item.quantity;
+            // Добавление товара (POST /item/add)
+            async function addNewProduct() {
+                if (isSubmitting) return;
+
+                const name = document.getElementById('new-product-name').value;
+                const description = document.getElementById('new-product-description').value;
+                const price = parseFloat(document.getElementById('new-product-price').value);
+                const quantity = parseInt(document.getElementById('new-product-quantity').value);
+                const warehouseId = document.getElementById('new-product-warehouse').value;
+
+                if (!name || !description || !price || !warehouseId) {
+                    alert('Заполните обязательные поля');
+                    return;
                 }
-            });
 
-            alert(`Поставка успешно создана! Товары добавлены на склад.`);
+                if (quantity < 0) {
+                    alert('Количество не может быть отрицательным');
+                    return;
+                }
 
-            clearSupplyForm();
+                isSubmitting = true;
 
-            loadProducts();
-        }
+                try {
+                    const requestBody = {
+                        name: name,
+                        description: description,
+                        price: price,
+                        idWareHouse: warehouseId,
+                        quantityWareHouse: quantity
+                    };
 
-        function clearSupplyForm() {
-            currentSupply.items = [];
-            updateSupplyItemsDisplay();
-            document.getElementById('supply-supplier').value = '';
-            document.getElementById('supply-warehouse').value = '';
-        }
+                    const response = await apiRequest('/item/add', 'POST', requestBody);
 
-        function loadSuppliers() {
-            const tbody = document.getElementById('suppliers-table');
-            tbody.innerHTML = '';
-
-            mockData.suppliers.forEach(supplier => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                        <td>${supplier.id}</td>
-                        <td><strong>${supplier.name}</strong></td>
-                        <td>${supplier.country}</td>
-                        <td>${supplier.phone}</td>
-                        <td>${supplier.address}</td>
-                    `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function addNewSupplier() {
-            const name = document.getElementById('new-supplier-name').value;
-            const phone = document.getElementById('new-supplier-phone').value;
-            const countryId = document.getElementById('new-supplier-country').value;
-            const address = document.getElementById('new-supplier-address').value;
-
-            if (!name || !phone || !address) {
-                alert('Заполните обязательные поля');
-                return;
+                    alert('Товар успешно добавлен');
+                    closeModal('addProductModal');
+                    await loadProducts();
+                    await loadProductsForSelect();
+                } catch (error) {
+                    console.error('Error adding product:', error);
+                    alert(error.message || 'Ошибка при добавлении товара');
+                } finally {
+                    isSubmitting = false;
+                }
             }
 
-            const countryMap = {
-                '1': 'Россия',
-                '2': 'США',
-                '3': 'Китай'
-            };
+            // Обновление цены товара (POST /item/price/update)
+            async function editProduct(productId) {
+                const product = allProducts.find(p => p.id === productId);
+                if (!product) return;
 
-            const newSupplier = {
-                id: Math.max(...mockData.suppliers.map(s => s.id)) + 1,
-                name: name,
-                phone: phone,
-                country: countryMap[countryId] || 'Россия',
-                address: address
-            };
+                const newPrice = prompt(`Введите новую цену для товара "${product.name}":`, product.price);
 
-            mockData.suppliers.push(newSupplier);
-            loadSuppliers();
-            populateSelects();
-            closeModal('addSupplierModal');
-            alert(`Поставщик "${name}" добавлен`);
-        }
+                if (newPrice === null) return;
 
-        function loadDeleteProducts() {
-            const tbody = document.getElementById('delete-table');
-            tbody.innerHTML = '';
+                const price = parseFloat(newPrice);
+                if (isNaN(price) || price <= 0) {
+                    alert('Введите корректную цену');
+                    return;
+                }
 
-            mockData.products.forEach(product => {
-                const canDelete = product.purchases < 2;
-                const statusText = canDelete ? 'Можно удалить' : 'Нельзя удалить';
-                const statusClass = canDelete ? 'status-danger' : 'status-success';
+                try {
+                    const requestBody = {
+                        iD: productId,
+                        newPrice: price
+                    };
 
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                        <td>${product.id}</td>
-                        <td><strong>${product.name}</strong></td>
-                        <td>${product.purchases} покупок</td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                        <td>
-                            ${canDelete ?
-                        `<button class="btn btn-small btn-danger" onclick="deleteProduct(${product.id})">Удалить</button>` :
-                        '<button class="btn btn-small" disabled>Удалить</button>'
+                    await apiRequest('/item/price/update', 'POST', requestBody);
+
+                    alert('Цена успешно обновлена');
+                    await loadProducts();
+                } catch (error) {
+                    console.error('Error updating price:', error);
+                    alert(error.message || 'Ошибка при обновлении цены');
+                }
+            }
+
+            // Удаление товара (DELETE /item/delete?id=)
+            async function deleteProduct(productId) {
+                const product = allProducts.find(p => p.id === productId);
+                if (!product) return;
+
+                if (!confirm(`Удалить товар "${product.name}"?`)) return;
+
+                try {
+                    await apiRequest(`/item/delete?id=${productId}`, 'DELETE');
+                    alert('Товар успешно удален');
+                    await loadProducts();
+                    await loadDeleteProducts();
+                    await loadProductsForSelect();
+                } catch (error) {
+                    console.error('Error deleting product:', error);
+                    alert(error.message || 'Ошибка при удалении товара');
+                }
+            }
+
+            // Загрузка поставщиков (GET /providers)
+            async function loadSuppliers() {
+                try {
+                    const response = await apiRequest('/providers', 'GET');
+                    const providerNames = await response.json();
+
+                    allSuppliers = providerNames;
+
+                    const tbody = document.getElementById('suppliers-table');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+
+                        if (providerNames.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="5" class="loading">Нет поставщиков</td></tr>';
+                        } else {
+                            providerNames.forEach((name, index) => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                        <td>${index + 1}</td>
+                                        <td><strong>${name}</strong></td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                    `;
+                                tbody.appendChild(row);
+                            });
+                        }
                     }
-                        </td>
-                    `;
-                tbody.appendChild(row);
-            });
-        }
 
-        function deleteProduct(productId) {
-            const product = mockData.products.find(p => p.id === productId);
-            if (!product) return;
+                    await loadSuppliersForSelect(providerNames);
 
-            if (product.purchases >= 2) {
-                alert('Этот товар нельзя удалить (более 2 покупок)');
-                return;
+                } catch (error) {
+                    console.error('Error loading suppliers:', error);
+                    const tbody = document.getElementById('suppliers-table');
+                    if (tbody) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="loading">Ошибка загрузки поставщиков</td></tr>';
+                    }
+                }
             }
 
-            if (confirm(`Удалить товар "${product.name}"?`)) {
-                mockData.products = mockData.products.filter(p => p.id !== productId);
-                alert(`Товар "${product.name}" удален`);
+            // Загрузка поставщиков для select
+            async function loadSuppliersForSelect(providerNames) {
+                const supplierSelect = document.getElementById('supply-supplier');
+                if (!supplierSelect) return;
+
+                supplierSelect.innerHTML = '<option value="">Выберите поставщика...</option>';
+
+                providerNames.forEach((name, index) => {
+                    const option = document.createElement('option');
+                    option.value = index.toString();
+                    option.textContent = name;
+                    supplierSelect.appendChild(option);
+                });
+            }
+
+            // Добавление поставщика (POST /provider/add)
+            async function addNewSupplier() {
+                if (isSubmitting) return;
+
+                const name = document.getElementById('new-supplier-name').value;
+                const phone = document.getElementById('new-supplier-phone').value;
+                const countryId = document.getElementById('new-supplier-country').value;
+                const address = document.getElementById('new-supplier-address').value;
+
+                if (!name || !phone || !countryId || !address) {
+                    alert('Заполните все поля');
+                    return;
+                }
+
+                isSubmitting = true;
+
+                try {
+                    const requestBody = {
+                        name: name,
+                        numberPhone: phone,
+                        idCountry: countryId,
+                        address: address
+                    };
+
+                    console.log('Adding supplier:', requestBody);
+
+                    const response = await apiRequest('/provider/add', 'POST', requestBody);
+
+                    alert('Поставщик успешно добавлен');
+                    closeModal('addSupplierModal');
+                    await loadSuppliers();
+
+                    document.getElementById('new-supplier-name').value = '';
+                    document.getElementById('new-supplier-phone').value = '';
+                    document.getElementById('new-supplier-country').value = '';
+                    document.getElementById('new-supplier-address').value = '';
+                } catch (error) {
+                    console.error('Error adding supplier:', error);
+                    alert(error.message || 'Ошибка при добавлении поставщика');
+                } finally {
+                    isSubmitting = false;
+                }
+            }
+
+            // Загрузка складов (GET /warehouse)
+            async function loadWarehouses() {
+                try {
+                    const response = await apiRequest('/warehouse', 'GET');
+                    const warehouseAddresses = await response.json();
+
+                    allWarehouseAddresses = warehouseAddresses;
+
+                    const warehouseSelect = document.getElementById('new-product-warehouse');
+                    if (warehouseSelect) {
+                        warehouseSelect.innerHTML = '<option value="">Выберите склад...</option>';
+                        warehouseAddresses.forEach((address, index) => {
+                            const option = document.createElement('option');
+                            option.value = (index + 1).toString();
+                            option.textContent = address;
+                            warehouseSelect.appendChild(option);
+                        });
+                    }
+
+                    const supplyWarehouseSelect = document.getElementById('supply-warehouse');
+                    if (supplyWarehouseSelect) {
+                        supplyWarehouseSelect.innerHTML = '<option value="">Выберите склад...</option>';
+                        warehouseAddresses.forEach((address, index) => {
+                            const option = document.createElement('option');
+                            option.value = (index + 1).toString();
+                            option.textContent = address;
+                            supplyWarehouseSelect.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error loading warehouses:', error);
+                }
+            }
+
+            // Загрузка стран (GET /countries)
+            async function loadCountries() {
+                try {
+                    const response = await apiRequest('/countries', 'GET');
+                    const countries = await response.json();
+
+                    allCountries = countries;
+
+                    const countrySelect = document.getElementById('new-supplier-country');
+                    if (countrySelect) {
+                        countrySelect.innerHTML = '<option value="">Выберите страну...</option>';
+                        countries.forEach(country => {
+                            const option = document.createElement('option');
+                            option.value = country.id;
+                            option.textContent = country.name;
+                            countrySelect.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error loading countries:', error);
+                }
+            }
+
+            // Загрузка товаров для удаления
+            async function loadDeleteProducts() {
+                const tbody = document.getElementById('delete-table');
+                tbody.innerHTML = '<tr><td colspan="4" class="loading"><div class="spinner"></div>Загрузка товаров...</td></tr>';
+
+                try {
+                    await loadAllProducts();
+
+                    if (allProducts.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="loading">Нет товаров</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = '';
+                    allProducts.forEach(product => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                                <td>${product.id.substring(0, 8)}...</td>
+                                <td><strong>${product.name}</strong></td>
+                                <td>${product.quantityWareHouse} шт.</td>
+                                <td>
+                                    <button class="btn btn-small btn-danger" onclick="window.deleteProduct('${product.id}')">
+                                        Удалить
+                                    </button>
+                                </td>
+                            `;
+                        tbody.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Error loading delete products:', error);
+                    tbody.innerHTML = '<tr><td colspan="4" class="loading">Ошибка загрузки товаров</td></tr>';
+                }
+            }
+
+            // Загрузка товаров для select в поставке
+            async function loadProductsForSelect() {
+                const productSelect = document.getElementById('add-product-select');
+                if (!productSelect) return;
+
+                productSelect.innerHTML = '<option value="">Загрузка товаров...</option>';
+
+                try {
+                    await loadAllProducts();
+
+                    productSelect.innerHTML = '<option value="">Выберите товар...</option>';
+                    allProducts.forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.id;
+                        option.textContent = `${product.name} (${formatCurrency(product.price)})`;
+                        productSelect.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error loading products for select:', error);
+                    productSelect.innerHTML = '<option value="">Ошибка загрузки</option>';
+                }
+            }
+
+            // Функции для работы с поставкой
+            function addProductToSupply() {
+                const productId = document.getElementById('add-product-select').value;
+                const quantity = parseInt(document.getElementById('add-product-quantity').value);
+                const price = parseInt(document.getElementById('add-product-price').value);
+
+                if (!productId || !quantity || !price) {
+                    alert('Заполните все поля');
+                    return;
+                }
+
+                if (quantity <= 0) {
+                    alert('Количество должно быть больше 0');
+                    return;
+                }
+
+                if (price < 10) {
+                    alert('Цена должна быть не менее 10 рублей');
+                    return;
+                }
+
+                const product = allProducts.find(p => p.id === productId);
+                if (!product) return;
+
+                const existingItem = currentSupply.items.find(item => item.productId === productId);
+
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    currentSupply.items.push({
+                        productId: productId,
+                        productName: product.name,
+                        quantity: quantity,
+                        price: price
+                    });
+                }
+
+                updateSupplyItemsDisplay();
+
+                document.getElementById('add-product-select').value = '';
+                document.getElementById('add-product-quantity').value = '1';
+                document.getElementById('add-product-price').value = '';
+            }
+
+            function updateSupplyItemsDisplay() {
+                const tbody = document.getElementById('supply-items');
+
+                if (currentSupply.items.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="loading">Добавьте товары в поставку</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                currentSupply.items.forEach((item, index) => {
+                    const total = item.quantity * item.price;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                            <td>${item.productName}</td>
+                            <td>${item.quantity} шт.</td>
+                            <td>${formatCurrency(item.price)}</td>
+                            <td>${formatCurrency(total)}</td>
+                            <td><button class="btn btn-small btn-danger" onclick="window.removeSupplyItem(${index})">×</button></td>
+                        `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            function removeSupplyItem(index) {
+                currentSupply.items.splice(index, 1);
+                updateSupplyItemsDisplay();
+            }
+
+            // Создание поставки (POST /client/order/create)
+            async function createSupply() {
+                const supplierId = document.getElementById('supply-supplier').value;
+                const warehouseId = document.getElementById('supply-warehouse').value;
+
+                if (!supplierId || !warehouseId) {
+                    alert('Выберите поставщика и склад');
+                    return;
+                }
+
+                if (currentSupply.items.length === 0) {
+                    alert('Добавьте хотя бы один товар в поставку');
+                    return;
+                }
+
+                try {
+                    isSubmitting = true;
+
+                    for (const item of currentSupply.items) {
+                        const orderRequest = {
+                            idClients: supplierId,
+                            idItem: item.productId,
+                            quantity: item.quantity
+                        };
+
+                        await apiRequest('/client/order/create', 'POST', orderRequest);
+                    }
+
+                    alert('Поставка успешно создана');
+                    clearSupplyForm();
+                    await loadProducts();
+                } catch (error) {
+                    console.error('Error creating supply:', error);
+                    alert(error.message || 'Ошибка при создании поставки');
+                } finally {
+                    isSubmitting = false;
+                }
+            }
+
+            function clearSupplyForm() {
+                currentSupply.items = [];
+                updateSupplyItemsDisplay();
+                document.getElementById('supply-supplier').value = '';
+                document.getElementById('supply-warehouse').value = '';
+            }
+
+            // Навигация
+            function initializeNavigation() {
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('click', function () {
+                        navItems.forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+
+                        const pageId = this.getAttribute('data-page');
+                        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                        document.getElementById(pageId + '-page').classList.add('active');
+
+                        switch (pageId) {
+                            case 'products':
+                                loadProducts();
+                                break;
+                            case 'suppliers':
+                                loadSuppliers();
+                                break;
+                            case 'delete':
+                                loadDeleteProducts();
+                                break;
+                            case 'supplies':
+                                loadSuppliers();
+                                loadWarehouses();
+                                loadProductsForSelect();
+                                break;
+                        }
+                    });
+                });
+            }
+
+            // Модальные окна
+            function showModal(modalId) {
+                document.getElementById(modalId).style.display = 'flex';
+
+                if (modalId === 'addProductModal') {
+                    loadWarehouses();
+                    document.getElementById('new-product-name').value = '';
+                    document.getElementById('new-product-description').value = '';
+                    document.getElementById('new-product-price').value = '1000';
+                    document.getElementById('new-product-quantity').value = '0';
+                } else if (modalId === 'addSupplierModal') {
+                    loadCountries();
+                    document.getElementById('new-supplier-name').value = '';
+                    document.getElementById('new-supplier-phone').value = '';
+                    document.getElementById('new-supplier-address').value = '';
+                }
+            }
+
+            function closeModal(modalId) {
+                document.getElementById(modalId).style.display = 'none';
+            }
+
+            function showAddProductModal() {
+                showModal('addProductModal');
+            }
+
+            function showAddSupplierModal() {
+                showModal('addSupplierModal');
+            }
+
+            // Вспомогательные функции
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('ru-RU', {
+                    style: 'currency',
+                    currency: 'RUB',
+                    minimumFractionDigits: 0
+                }).format(amount);
+            }
+
+            // Выход
+            function logout() {
+                if (confirm("Выйти из системы?")) {
+                    window.location.href = '/login';
+                }
+            }
+
+            // Экспортируем функции в глобальную область видимости
+            window.logout = logout;
+            window.searchProducts = searchProducts;
+            window.showAddProductModal = showAddProductModal;
+            window.addNewProduct = addNewProduct;
+            window.editProduct = editProduct;
+            window.deleteProduct = deleteProduct;
+            window.showAddSupplierModal = showAddSupplierModal;
+            window.addNewSupplier = addNewSupplier;
+            window.closeModal = closeModal;
+            window.addProductToSupply = addProductToSupply;
+            window.createSupply = createSupply;
+            window.clearSupplyForm = clearSupplyForm;
+            window.removeSupplyItem = removeSupplyItem;
+
+            // Инициализация при загрузке страницы
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log('Page loaded, initializing...');
+                initializeNavigation();
                 loadProducts();
-                loadDeleteProducts();
-            }
-        }
+                loadSuppliers();
+                loadWarehouses();
+                loadCountries();
+            });
 
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('ru-RU', {
-                style: 'currency',
-                currency: 'RUB',
-                minimumFractionDigits: 0
-            }).format(amount);
-        }
-
-        function logout() {
-            if (confirm("Выйти из системы?")) {
-                alert("Вы вышли из системы");
-            }
-        }
+        })();
     </script>
 </body>
 </html>

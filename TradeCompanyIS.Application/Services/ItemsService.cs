@@ -36,5 +36,9 @@ namespace TradeCompanyIS.Application.Services
         {
             return await _repository.GetAsync(id, token);
         }
+        public async Task<List<Items>> GetAllAsync(CancellationToken token)
+        {
+            return await _repository.GetAllAsync(token);
+        }
     }
 }
