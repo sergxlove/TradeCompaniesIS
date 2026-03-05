@@ -215,12 +215,12 @@ namespace TradeCompanyIS.Endpoints
                 try
                 {
                     List<Providers> providersFull = await providersService.GetAllAsync();
-                    List<string> providersName = new List<string>();
-                    foreach (Providers provider in providersFull)
-                    { 
-                        providersName.Add(provider.Name);
-                    }
-                    return Results.Ok(providersName);
+                    //List<string> providersName = new List<string>();
+                    //foreach (Providers provider in providersFull)
+                    //{ 
+                    //    providersName.Add(provider.Name);
+                    //}
+                    return Results.Ok(providersFull);
                 }
                 catch
                 {
@@ -322,7 +322,8 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAuthClient")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/tables/{name}/data", async (string name,
                 [FromServices] ITableService tableService,
@@ -337,7 +338,8 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAuthClient")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/change-password", async ( HttpContext context,
                 [FromBody] ChangePasswordRequest request,
@@ -361,7 +363,8 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAuthClient")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapDelete("/users/{users}", async (string users,
                 [FromServices] IUsersService userService,
@@ -379,7 +382,8 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.BadRequest();
                 }
-            });
+            }).RequireAuthorization("OnlyForAuthClient")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/countries", async (
                 [FromServices] ICountriesService countriesService,
@@ -394,7 +398,8 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAuthClient")
+            .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/items", async (
                 [FromServices] IItemsService itemService, 
@@ -409,7 +414,35 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            });
+            }).RequireAuthorization("OnlyForAuthClient")
+            .RequireRateLimiting("GeneralPolicy");
+
+            app.MapPost("/supply/create", async (
+                [FromBody] CreateSupplyRequest request,
+                [FromServices] ISuppliesService suppliesService,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    if (request is null)
+                        return Results.BadRequest("Request is null");
+                    ResultModel<Supplies> supply = Supplies.Create(Guid.NewGuid(), request.IdProvider, 
+                        request.IdWarehouse, request.IdItem, request.Quantity, request.Price);
+                    if (!supply.IsSuccess)
+                        return Results.BadRequest(supply.Error);
+                    Guid result = await suppliesService.AddAsync(supply.Value, token);
+
+                    if (result != supply.Value.Id)
+                        return Results.BadRequest("Failed to create supply");
+
+                    return Results.Ok();
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            }).RequireAuthorization("OnlyForAuthClient")
+            .RequireRateLimiting("GeneralPolicy");
 
             return app;
         }
