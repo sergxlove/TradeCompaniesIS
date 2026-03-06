@@ -8,5 +8,6 @@ namespace TradeCompanyIS.DataAccess.Postgres.Abstractions
         Task<int> DeleteAsync(Guid id, CancellationToken token);
         Task<Clients?> GetAsync(Guid id, CancellationToken token);
         Task<Guid> GetIdByEmail(string email, CancellationToken token);
+        Task<bool> CheckAsync(string email, CancellationToken token);
     }
 }

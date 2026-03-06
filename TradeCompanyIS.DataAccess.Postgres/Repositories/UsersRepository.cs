@@ -24,7 +24,8 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
                     Id = user.Id,
                     Username = user.Username,
                     HashPassword = user.HashPassword,
-                    Role = user.Role
+                    Role = user.Role,
+                    ClientId = user.ClientId,
                 };
                 await _context.UsersTable.AddAsync(usersEntity, token);
                 await _context.SaveChangesAsync(token);
@@ -70,6 +71,15 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
                 .FirstOrDefaultAsync(a => a.Username == username, token);
             if (result is null) return Guid.Empty;
             return result.Id;
+        }
+
+        public async Task<Guid> GetIdClientByUsernameAsync(string username, CancellationToken token)
+        {
+            UsersEntity? result = await _context.UsersTable
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Username == username, token);
+            if (result is null) return Guid.Empty;
+            return result.ClientId;
         }
 
         public async Task<bool> VerifyAsync(string username, string password, CancellationToken token)

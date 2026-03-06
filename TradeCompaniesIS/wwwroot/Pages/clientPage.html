@@ -534,6 +534,7 @@
         </div>
         <div class="user-info">
             <span class="user-role">Клиент</span>
+            <span id="user-email-display" style="color: var(--text-secondary);"></span>
             <button class="logout-btn" onclick="logout()">Выйти</button>
         </div>
     </div>
@@ -597,7 +598,8 @@
                         </div>
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" id="edit-email">
+                            <input type="email" id="edit-email" readonly style="background-color: var(--bg-primary);">
+                            <small style="color: var(--text-secondary);">Email нельзя изменить</small>
                         </div>
                         <div class="form-group">
                             <label>Адрес</label>
@@ -621,7 +623,7 @@
                             <tr>
                                 <th>№ заказа</th>
                                 <th>Дата</th>
-                                <th>Товар</th>
+                                <th>ID товара</th>
                                 <th>Количество</th>
                                 <th>Статус</th>
                             </tr>
@@ -671,8 +673,8 @@
     </div>
 
     <script>
-        const API_BASE_URL = '';
         let clientId = null;
+        let userEmail = null;
         let isSubmitting = false;
 
         async function apiRequest(url, method = 'GET', body = null) {
@@ -692,6 +694,12 @@
             const response = await fetch(url, options);
 
             if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('clientId');
+                    localStorage.removeItem('userEmail');
+                    window.location.href = '/login';
+                    throw new Error('Сессия истекла');
+                }
                 const errorText = await response.text();
                 throw new Error(errorText || 'Ошибка запроса');
             }
@@ -699,11 +707,94 @@
             return response;
         }
 
+        // Функция для декодирования JWT и получения email
+        function getEmailFromToken() {
+            try {
+                // Получаем cookie с JWT
+                const cookies = document.cookie.split(';');
+                const jwtCookie = cookies.find(c => c.trim().startsWith('jwt='));
+
+                if (!jwtCookie) return null;
+
+                const token = jwtCookie.split('=')[1];
+                // Декодируем payload JWT (вторая часть)
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const payload = JSON.parse(window.atob(base64));
+
+                // В JWT email может храниться в разных полях
+                return payload.email || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || null;
+            } catch (error) {
+                console.error('Error decoding JWT:', error);
+                return null;
+            }
+        }
+
+        // Функция для получения clientId по email
+        async function getClientIdByEmail(email) {
+            try {
+                const encodedEmail = encodeURIComponent(email);
+                const response = await apiRequest(`/clients/get/${encodedEmail}`, 'GET');
+                const id = await response.json();
+                return id;
+            } catch (error) {
+                console.error('Error getting clientId by email:', error);
+                return null;
+            }
+        }
+
+        // Основная функция инициализации
+        async function initializeClientData() {
+            // Сначала пробуем получить email из JWT
+            const emailFromToken = getEmailFromToken();
+
+            if (emailFromToken) {
+                userEmail = emailFromToken;
+                document.getElementById('user-email-display').textContent = emailFromToken;
+                localStorage.setItem('userEmail', emailFromToken);
+
+                // Получаем clientId по email
+                const id = await getClientIdByEmail(emailFromToken);
+                if (id) {
+                    clientId = id;
+                    localStorage.setItem('clientId', id);
+                    return true;
+                }
+            }
+
+            // Если не получилось из JWT, проверяем URL параметры
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlClientId = urlParams.get('clientId');
+            const urlEmail = urlParams.get('email');
+
+            if (urlClientId && urlEmail) {
+                clientId = urlClientId;
+                userEmail = urlEmail;
+                localStorage.setItem('clientId', clientId);
+                localStorage.setItem('userEmail', userEmail);
+                document.getElementById('user-email-display').textContent = userEmail;
+                return true;
+            }
+
+            // Проверяем localStorage
+            const storedClientId = localStorage.getItem('clientId');
+            const storedEmail = localStorage.getItem('userEmail');
+
+            if (storedClientId && storedEmail) {
+                clientId = storedClientId;
+                userEmail = storedEmail;
+                document.getElementById('user-email-display').textContent = storedEmail;
+                return true;
+            }
+
+            return false;
+        }
+
         async function loadClientProfile() {
             if (!clientId) {
-                clientId = localStorage.getItem('clientId');
-                if (!clientId) {
-                    showError('ID клиента не найден');
+                const initialized = await initializeClientData();
+                if (!initialized) {
+                    showError('ID клиента не найден. Пожалуйста, войдите в систему.');
                     return;
                 }
             }
@@ -719,7 +810,7 @@
 
                 document.getElementById('edit-name').value = client.nameClient || '';
                 document.getElementById('edit-phone').value = client.numberPhone || '';
-                document.getElementById('edit-email').value = client.email || '';
+                document.getElementById('edit-email').value = client.email || userEmail || '';
                 document.getElementById('edit-address').value = client.addressDelivery || '';
 
             } catch (error) {
@@ -733,8 +824,8 @@
             tbody.innerHTML = '<tr><td colspan="5" class="loading"><div class="spinner"></div>Загрузка заказов...</td></tr>';
 
             if (!clientId) {
-                clientId = localStorage.getItem('clientId');
-                if (!clientId) {
+                const initialized = await initializeClientData();
+                if (!initialized) {
                     tbody.innerHTML = '<tr><td colspan="5" class="loading">ID клиента не найден</td></tr>';
                     return;
                 }
@@ -758,9 +849,9 @@
                     let statusClass = 'status-processing';
 
                     row.innerHTML = `
-                            <td>#${order.id.toString().substring(0, 8)}</td>
-                            <td>${formatDate(order.dateOrder)}</td>
-                            <td>${order.idItem ? order.idItem.substring(0, 8) + '...' : '-'}</td>
+                            <td>#${order.id.substring(0, 8)}</td>
+                            <td>${formatDate(order.dateReg)}</td>
+                            <td>${order.idItem || '-'}</td>
                             <td>${order.quantity || 1}</td>
                             <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                         `;
@@ -790,8 +881,8 @@
             }
 
             if (!clientId) {
-                clientId = localStorage.getItem('clientId');
-                if (!clientId) {
+                const initialized = await initializeClientData();
+                if (!initialized) {
                     alert('ID клиента не найден');
                     return;
                 }
@@ -842,7 +933,7 @@
 
                 let stockStatus, stockClass;
 
-                if (product.quantity > 0) {
+                if (product.quantityWareHouse > 0) {
                     stockStatus = 'В наличии';
                     stockClass = 'stock-available';
                 } else {
@@ -857,7 +948,7 @@
                             <div class="availability-info">
                                 <div>
                                     <div class="profile-label">Остаток</div>
-                                    <div class="profile-value">${product.quantity || 0} шт.</div>
+                                    <div class="profile-value">${product.quantityWareHouse || 0} шт.</div>
                                 </div>
                                 <div>
                                     <div class="profile-label">Статус</div>
@@ -883,7 +974,7 @@
                 nameClient: document.getElementById('edit-name').value,
                 numberPhone: document.getElementById('edit-phone').value,
                 email: document.getElementById('edit-email').value,
-                idCountry: 1,
+                idCountry: "00000000-0000-0000-0000-000000000001", // Замените на реальный ID страны
                 addressDelivery: document.getElementById('edit-address').value
             };
 
@@ -895,10 +986,25 @@
             isSubmitting = true;
 
             try {
-                await apiRequest('/client/create', 'POST', clientData);
-                alert('Изменения сохранены успешно!');
+                if (clientId) {
+                    // Обновление существующего клиента (нужен соответствующий эндпоинт)
+                    await apiRequest(`/clients/update/${clientId}`, 'PUT', clientData);
+                } else {
+                    // Создание нового клиента
+                    const response = await apiRequest('/client/create', 'POST', clientData);
+
+                    // После создания получаем clientId по email
+                    const newClientId = await getClientIdByEmail(clientData.email);
+                    if (newClientId) {
+                        clientId = newClientId;
+                        localStorage.setItem('clientId', clientId);
+                    }
+                }
+
+                alert('Профиль успешно сохранен!');
                 toggleEditProfile();
                 loadClientProfile();
+
             } catch (error) {
                 alert(error.message || 'Ошибка при сохранении');
             } finally {
@@ -910,11 +1016,14 @@
             if (confirm("Вы уверены, что хотите выйти?")) {
                 try {
                     await apiRequest('/logout', 'GET');
-                    localStorage.removeItem('clientId');
                 } catch (error) {
                     console.error('Logout error:', error);
+                } finally {
+                    localStorage.removeItem('clientId');
+                    localStorage.removeItem('userEmail');
+                    document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    window.location.href = '/login';
                 }
-                window.location.href = '/loginPage';
             }
         }
 
@@ -975,19 +1084,14 @@
             alert(message);
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        // Запуск при загрузке страницы
+        document.addEventListener('DOMContentLoaded', async function () {
             initializeNavigation();
 
-            const urlParams = new URLSearchParams(window.location.search);
-            clientId = urlParams.get('clientId');
+            // Инициализируем данные клиента
+            const initialized = await initializeClientData();
 
-            if (clientId) {
-                localStorage.setItem('clientId', clientId);
-            } else {
-                clientId = localStorage.getItem('clientId');
-            }
-
-            if (clientId) {
+            if (initialized) {
                 loadClientProfile();
             } else {
                 showError('ID клиента не найден. Пожалуйста, войдите в систему.');

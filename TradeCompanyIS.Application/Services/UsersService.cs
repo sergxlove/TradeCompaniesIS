@@ -50,5 +50,10 @@ namespace TradeCompanyIS.Application.Services
         {
             return await _repository.GetAllUsersAsync(token);
         }
+
+        public async Task<Guid> GetIdClientByUsernameAsync(string username, CancellationToken token)
+        {
+            return await _repository.GetIdClientByUsernameAsync(username, token);
+        }
     }
 }

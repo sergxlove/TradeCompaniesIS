@@ -9,10 +9,11 @@ namespace TradeCompanyIS.Core.Models
         public string Username { get; } = string.Empty;
         public string HashPassword { get; } = string.Empty;
         public string Role { get; } = string.Empty;
+        public Guid ClientId { get; }
         public static IPasswordHasherService PasswordHasherService { get; set; } = new PasswordHasherService();
 
         public static ResultModel<Users> Create(Guid id, string username, string password,
-            string role, IPasswordHasherService passwordHasherService)
+            string role, Guid clientId, IPasswordHasherService passwordHasherService)
         {
             if (id == Guid.Empty)
                 return ResultModel<Users>.Failure("Поле Id не должно быть пустым");
@@ -26,7 +27,7 @@ namespace TradeCompanyIS.Core.Models
             if (string.IsNullOrWhiteSpace(role))
                 return ResultModel<Users>.Failure("Поле Роль не должно быть пустым");
             return ResultModel<Users>.Success(new Users(id, username,
-                passwordHasherService.Hash(password), role, passwordHasherService));
+                passwordHasherService.Hash(password), role, clientId, passwordHasherService));
         }
 
         public static bool VerifyPassword(string password, string hashPassword)
@@ -34,7 +35,7 @@ namespace TradeCompanyIS.Core.Models
             return PasswordHasherService.Verify(password, hashPassword);
         }
 
-        private Users(Guid id, string username, string hashPassword, string role,
+        private Users(Guid id, string username, string hashPassword, string role, Guid clientId,
             IPasswordHasherService passwordHasherService)
         {
             Id = id;

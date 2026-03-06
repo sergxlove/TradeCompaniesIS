@@ -576,7 +576,7 @@
                             <li>Зашифрованные телефон и email</li>
                             <li>Страна и адрес</li>
                         </ul>
-                        <p>В таблице <code>login</code> будет создана запись с вашим логином и хешированным паролем.</p>
+                        <p>В таблице <code>users</code> будет создана запись с вашим логином и хешированным паролем.</p>
                     </div>
 
                     <div class="checkbox-group">
@@ -606,7 +606,7 @@
                 <div class="loading" id="loading">
                     <div class="spinner"></div>
                     <p>Регистрация клиента...</p>
-                    <p class="hint">Создание записи в таблице Клиент и генерация login...</p>
+                    <p class="hint">Создание записи в таблице Клиент и пользователя в системе...</p>
                 </div>
 
                 <div class="success-message" id="successMessage">
@@ -617,7 +617,7 @@
                         <p><strong>Созданы записи:</strong></p>
                         <ul>
                             <li>В таблице <strong>Клиент</strong> создана запись</li>
-                            <li>В таблице <strong>login</strong> с логином: <span id="loginUsername">-</span></li>
+                            <li>В таблице <strong>users</strong> с логином: <span id="loginUsername">-</span></li>
                             <li>Назначена роль "Клиент"</li>
                         </ul>
                     </div>
@@ -635,7 +635,6 @@
 
     <script>
         let isSubmitting = false;
-        let countriesList = [];
 
         async function apiRequest(url, method = 'GET', body = null) {
             const options = {
@@ -666,12 +665,8 @@
             const countrySelect = document.getElementById('country');
 
             try {
-                // Здесь должен быть ваш эндпоинт для получения списка стран
-                // Например: GET /countries
                 const response = await apiRequest('/countries', 'GET');
                 const countries = await response.json();
-
-                countriesList = countries;
 
                 // Очищаем select
                 countrySelect.innerHTML = '<option value="">Выберите страну...</option>';
@@ -684,25 +679,51 @@
                     countrySelect.appendChild(option);
                 });
 
-                // Устанавливаем код страны для первой выбранной страны
-                updateCountryCode();
-
             } catch (error) {
                 console.error('Error loading countries:', error);
                 countrySelect.innerHTML = '<option value="">Ошибка загрузки стран</option>';
             }
         }
 
-        // Обновление кода страны при выборе
-        function updateCountryCode() {
-            const countryId = document.getElementById('country').value;
-            const selectedCountry = countriesList.find(c => c.id === countryId);
+        // Проверка уникальности логина
+        async function checkUsernameAvailability(username) {
+            try {
+                const response = await fetch(`/users/${username}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
 
-            // Здесь нужно получить код страны из отдельного эндпоинта
-            // Например: POST /country/id с телом { name: selectedCountry.name }
-            if (selectedCountry) {
-                // Временное решение - показываем название
-                document.getElementById('countryCode').textContent = selectedCountry.name.substring(0, 2);
+                if (response.ok) {
+                    // Пользователь найден - логин занят
+                    return false;
+                } else {
+                    // Пользователь не найден - логин свободен
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error checking username:', error);
+                return true; // В случае ошибки разрешаем регистрацию
+            }
+        }
+
+        // Проверка уникальности email
+        async function checkEmailUnique(email) {
+            try {
+                const response = await fetch(`/clients/get/${encodeURIComponent(email)}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    // Клиент с таким email существует
+                    return false;
+                } else {
+                    // Клиент не найден - email свободен
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error checking email:', error);
+                return true; // В случае ошибки разрешаем регистрацию
             }
         }
 
@@ -715,10 +736,6 @@
             // Загружаем страны при загрузке страницы
             loadCountries();
 
-            document.getElementById('country').addEventListener('change', function () {
-                updateCountryCode();
-            });
-
             document.getElementById('password').addEventListener('input', function () {
                 checkPasswordStrength(this.value);
             });
@@ -727,12 +744,12 @@
                 validatePasswordMatch();
             });
 
-            document.getElementById('username').addEventListener('blur', function () {
-                validateUsername(this.value);
+            document.getElementById('username').addEventListener('blur', async function () {
+                await validateUsername(this.value);
             });
 
-            document.getElementById('email').addEventListener('blur', function () {
-                validateEmail(this.value);
+            document.getElementById('email').addEventListener('blur', async function () {
+                await validateEmail(this.value);
             });
 
             document.getElementById('phone').addEventListener('blur', function () {
@@ -746,35 +763,33 @@
 
                 if (!validateForm()) return;
 
+                // Проверяем уникальность логина и email
+                const username = document.getElementById('username').value.trim();
+                const email = document.getElementById('email').value.trim();
+
+                const isUsernameAvailable = await checkUsernameAvailability(username);
+                if (!isUsernameAvailable) {
+                    showError('username', 'Этот логин уже занят');
+                    return;
+                }
+
                 isSubmitting = true;
                 formActions.style.display = 'none';
                 loading.style.display = 'block';
 
                 try {
-                    // 1. Сначала регистрируем пользователя (логин и пароль)
-                    const username = document.getElementById('username').value;
-                    const password = document.getElementById('password').value;
-                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    // Формируем ФИО из полей
+                    const nameClient = `${document.getElementById('lastName').value.trim()} ${document.getElementById('firstName').value.trim()} ${document.getElementById('middleName').value.trim()}`.trim();
 
-                    await apiRequest('/reg', 'POST', {
-                        username: username,
-                        password: password,
-                        againPassword: confirmPassword
-                    });
-
-                    // 2. Затем создаем клиента
-                    const nameClient = `${document.getElementById('lastName').value} ${document.getElementById('firstName').value} ${document.getElementById('middleName').value}`.trim();
-                    const phone = document.getElementById('phone').value;
-                    const email = document.getElementById('email').value;
-                    const countryId = document.getElementById('country').value;
-                    const address = document.getElementById('address').value;
-
+                    // Отправляем один запрос на регистрацию
                     await apiRequest('/client/create', 'POST', {
+                        username: username,
+                        password: document.getElementById('password').value,
                         nameClient: nameClient,
-                        numberPhone: phone,
+                        numberPhone: document.getElementById('phone').value.trim(),
                         email: email,
-                        idCountry: countryId,
-                        addressDelivery: address
+                        idCountry: document.getElementById('country').value,
+                        addressDelivery: document.getElementById('address').value.trim()
                     });
 
                     // Успешная регистрация
@@ -787,7 +802,19 @@
                     loading.style.display = 'none';
                     formActions.style.display = 'flex';
                     isSubmitting = false;
-                    alert(error.message || 'Ошибка при регистрации');
+
+                    // Проверяем, не связана ли ошибка с дубликатом
+                    if (error.message.includes('duplicate key') || error.message.includes('unique constraint')) {
+                        if (error.message.includes('Email')) {
+                            showError('email', 'Этот email уже зарегистрирован в системе');
+                        } else if (error.message.includes('Login') || error.message.includes('username')) {
+                            showError('username', 'Этот логин уже занят');
+                        } else {
+                            alert('Ошибка: такой пользователь уже существует');
+                        }
+                    } else {
+                        alert(error.message || 'Ошибка при регистрации');
+                    }
                 }
             });
         });
@@ -825,37 +852,29 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
             const errorElement = document.getElementById('confirmPasswordError');
 
-            if (password && confirmPassword && password !== confirmPassword) {
-                showError('confirmPassword', 'Пароли не совпадают');
+            if (confirmPassword && password !== confirmPassword) {
+                errorElement.textContent = 'Пароли не совпадают';
+                errorElement.style.display = 'block';
+                document.getElementById('confirmPassword').classList.add('error');
                 return false;
             } else {
-                hideError('confirmPassword');
+                errorElement.style.display = 'none';
+                document.getElementById('confirmPassword').classList.remove('error');
                 return true;
             }
         }
 
         async function validateUsername(username) {
-            const errorElement = document.getElementById('usernameError');
-
             if (username.length < 3) {
                 showError('username', 'Логин должен содержать минимум 3 символа');
                 return false;
             }
 
-            try {
-                // Пытаемся получить пользователя по логину
-                await apiRequest(`/users/${username}`, 'GET');
-                // Если пользователь найден - логин занят
-                showError('username', 'Этот логин уже занят');
-                return false;
-            } catch (error) {
-                // Пользователь не найден - это хорошо
-                hideError('username');
-                return true;
-            }
+            hideError('username');
+            return true;
         }
 
-        function validateEmail(email) {
+        async function validateEmail(email) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
             if (!emailRegex.test(email)) {
@@ -910,7 +929,6 @@
                 isValid = false;
             }
 
-            // Асинхронные проверки не блокируют отправку, они уже сработали на blur
             return isValid;
         }
 
@@ -918,17 +936,19 @@
             const field = document.getElementById(fieldId);
             const errorElement = document.getElementById(fieldId + 'Error');
 
-            field.classList.add('error');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
+            if (field) field.classList.add('error');
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
         }
 
         function hideError(fieldId) {
             const field = document.getElementById(fieldId);
             const errorElement = document.getElementById(fieldId + 'Error');
 
-            field.classList.remove('error');
-            errorElement.style.display = 'none';
+            if (field) field.classList.remove('error');
+            if (errorElement) errorElement.style.display = 'none';
         }
 
         function resetForm() {

@@ -7,6 +7,7 @@ namespace TradeCompanyIS.Application.Abstractions
         Task<Guid> AddAsync(Clients client, CancellationToken token);
         Task<int> DeleteAsync(Guid id, CancellationToken token);
         Task<Clients?> GetAsync(Guid id, CancellationToken token);
-        Task<Guid> GetIdByEmail(string email, CancellationToken token);
+        Task<Guid> GetIdByEmailAsync(string email, CancellationToken token);
+        Task<bool> CheckAsync(string email, CancellationToken token);
     }
 }
