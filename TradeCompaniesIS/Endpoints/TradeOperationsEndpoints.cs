@@ -51,6 +51,23 @@ namespace TradeCompanyIS.Endpoints
                 }
             });
 
+            app.MapGet("/clients/get/id/{email}", async (string email,
+                [FromServices] IUsersService userService,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    if (email == string.Empty)
+                        return Results.BadRequest("Id is empty");
+                    Guid resultId = await userService.GetIdClientByUsernameAsync(email, token);
+                    return Results.Ok(resultId);
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
             app.MapGet("/clients/orders/{id}", async (Guid id,
                 [FromServices] IOrdersService ordersService,
                 CancellationToken token) =>
@@ -413,7 +430,7 @@ namespace TradeCompanyIS.Endpoints
                 {
                     if (string.IsNullOrEmpty(users))
                         return Results.BadRequest("Login is empty");
-                    Guid userId = await userService.GetIdClientByUsernameAsync(users, token);
+                    Guid userId = await userService.GetIdByUsernameAsync(users, token);
                     await userService.DeleteAsync(userId, token);
                     return Results.Ok();
                 }
@@ -455,6 +472,23 @@ namespace TradeCompanyIS.Endpoints
                 }
             }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
+
+            app.MapGet("/items/search/{name}", async (string name,
+                [FromServices] IItemsService itemService,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(name))
+                        return Results.BadRequest("Name is empty");
+                    var result = await itemService.GetIdByNameAsync(name, token);
+                    return Results.Ok(result);
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
 
             app.MapPost("/supply/create", async (
                 [FromBody] CreateSupplyRequest request,

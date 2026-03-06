@@ -43,6 +43,7 @@ namespace TradeCompanyIS.Core.Models
             HashPassword = hashPassword;
             Role = role;
             PasswordHasherService = passwordHasherService;
+            ClientId = clientId;
         }
     }
 }

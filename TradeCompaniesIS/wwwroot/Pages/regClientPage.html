@@ -660,7 +660,6 @@
             return response;
         }
 
-        // Загрузка списка стран из БД
         async function loadCountries() {
             const countrySelect = document.getElementById('country');
 
@@ -668,13 +667,11 @@
                 const response = await apiRequest('/countries', 'GET');
                 const countries = await response.json();
 
-                // Очищаем select
                 countrySelect.innerHTML = '<option value="">Выберите страну...</option>';
 
-                // Добавляем страны из БД
                 countries.forEach(country => {
                     const option = document.createElement('option');
-                    option.value = country.id; // GUID страны
+                    option.value = country.id; 
                     option.textContent = country.name;
                     countrySelect.appendChild(option);
                 });
@@ -685,7 +682,6 @@
             }
         }
 
-        // Проверка уникальности логина
         async function checkUsernameAvailability(username) {
             try {
                 const response = await fetch(`/users/${username}`, {
@@ -694,19 +690,16 @@
                 });
 
                 if (response.ok) {
-                    // Пользователь найден - логин занят
                     return false;
                 } else {
-                    // Пользователь не найден - логин свободен
                     return true;
                 }
             } catch (error) {
                 console.error('Error checking username:', error);
-                return true; // В случае ошибки разрешаем регистрацию
+                return true;
             }
         }
 
-        // Проверка уникальности email
         async function checkEmailUnique(email) {
             try {
                 const response = await fetch(`/clients/get/${encodeURIComponent(email)}`, {
@@ -715,15 +708,13 @@
                 });
 
                 if (response.ok) {
-                    // Клиент с таким email существует
                     return false;
                 } else {
-                    // Клиент не найден - email свободен
                     return true;
                 }
             } catch (error) {
                 console.error('Error checking email:', error);
-                return true; // В случае ошибки разрешаем регистрацию
+                return true; 
             }
         }
 
@@ -733,7 +724,6 @@
             const successMessage = document.getElementById('successMessage');
             const formActions = document.getElementById('formActions');
 
-            // Загружаем страны при загрузке страницы
             loadCountries();
 
             document.getElementById('password').addEventListener('input', function () {
@@ -763,7 +753,6 @@
 
                 if (!validateForm()) return;
 
-                // Проверяем уникальность логина и email
                 const username = document.getElementById('username').value.trim();
                 const email = document.getElementById('email').value.trim();
 
@@ -778,10 +767,8 @@
                 loading.style.display = 'block';
 
                 try {
-                    // Формируем ФИО из полей
                     const nameClient = `${document.getElementById('lastName').value.trim()} ${document.getElementById('firstName').value.trim()} ${document.getElementById('middleName').value.trim()}`.trim();
 
-                    // Отправляем один запрос на регистрацию
                     await apiRequest('/client/create', 'POST', {
                         username: username,
                         password: document.getElementById('password').value,
@@ -792,7 +779,6 @@
                         addressDelivery: document.getElementById('address').value.trim()
                     });
 
-                    // Успешная регистрация
                     loading.style.display = 'none';
                     form.style.display = 'none';
                     successMessage.style.display = 'block';
@@ -803,7 +789,6 @@
                     formActions.style.display = 'flex';
                     isSubmitting = false;
 
-                    // Проверяем, не связана ли ошибка с дубликатом
                     if (error.message.includes('duplicate key') || error.message.includes('unique constraint')) {
                         if (error.message.includes('Email')) {
                             showError('email', 'Этот email уже зарегистрирован в системе');
