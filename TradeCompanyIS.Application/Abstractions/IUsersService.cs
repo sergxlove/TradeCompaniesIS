@@ -13,5 +13,6 @@ namespace TradeCompanyIS.Application.Abstractions
         Task<string> GetRoleAsync(string username, CancellationToken token);
         Task<Guid> GetIdByUsernameAsync(string username, CancellationToken token);
         Task<List<UsersResponse>> GetAllUsersAsync(CancellationToken token);
+        Task<Guid> GetIdClientByUsernameAsync(string username, CancellationToken token);
     }
 }

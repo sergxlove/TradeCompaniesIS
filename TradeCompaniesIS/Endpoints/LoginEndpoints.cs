@@ -27,6 +27,7 @@ namespace TradeCompanyIS.Endpoints
                     var claims = new List<Claim>()
                     {
                         new Claim(ClaimTypes.Role, "user"),
+                        new Claim(ClaimTypes.Email, request.Username)
                     };
                     var jwttoken = jwtService.GenerateToken(new JwtRequest()
                     {
@@ -56,12 +57,13 @@ namespace TradeCompanyIS.Endpoints
                     if (request.Password != request.AgainPassword)
                         return Results.BadRequest("passwords is not equals");
                     var user = Users.Create(Guid.NewGuid(), request.Username, request.Password,
-                        "user", passwordHasher);
+                        "user", Guid.Empty, passwordHasher);
                     if (!user.IsSuccess) return Results.BadRequest(user.Error);
                     var result = await userService.CreateAsync(user.Value, token);
                     var claims = new List<Claim>()
                     {
                         new Claim(ClaimTypes.Role, "user"),
+                        new Claim(ClaimTypes.Email, request.Username),
                     };
                     var jwttoken = jwtService.GenerateToken(new JwtRequest()
                     {

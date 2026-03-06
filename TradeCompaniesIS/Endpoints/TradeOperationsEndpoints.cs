@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TradeCompanyIS.Application.Abstractions;
+using TradeCompanyIS.Application.Requests;
+using TradeCompanyIS.Application.Services;
 using TradeCompanyIS.Core.Abstractions;
 using TradeCompanyIS.Core.Models;
 using TradeCompanyIS.DataAccess.Postgres.Response;
@@ -31,8 +34,25 @@ namespace TradeCompanyIS.Endpoints
             }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
+            app.MapGet("/clients/get/{email}", async (string email,
+                [FromServices] IClientsService clientsService,
+                CancellationToken token) =>
+            {
+                try
+                {
+                    if (email == string.Empty)
+                        return Results.BadRequest("Id is empty");
+                    Guid resultId = await clientsService.GetIdByEmailAsync(email, token);
+                    return Results.Ok(resultId);
+                }
+                catch
+                {
+                    return Results.InternalServerError();
+                }
+            });
+
             app.MapGet("/clients/orders/{id}", async (Guid id,
-                [FromServices] IOrdersService ordersService, 
+                [FromServices] IOrdersService ordersService,
                 CancellationToken token) =>
             {
                 try
@@ -50,8 +70,8 @@ namespace TradeCompanyIS.Endpoints
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/client/order/create", async (
-                [FromBody] CreateOrderRequest request, 
-                [FromServices] IOrdersService ordersService, 
+                [FromBody] CreateOrderRequest request,
+                [FromServices] IOrdersService ordersService,
                 CancellationToken token) =>
             {
                 try
@@ -75,8 +95,8 @@ namespace TradeCompanyIS.Endpoints
             }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
-            app.MapPost("/item/price/update", async ( 
-                [FromBody] UpdatePriceItemRequest request, 
+            app.MapPost("/item/price/update", async (
+                [FromBody] UpdatePriceItemRequest request,
                 [FromServices] IItemsService itemsService,
                 CancellationToken token) =>
             {
@@ -98,7 +118,7 @@ namespace TradeCompanyIS.Endpoints
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/item/add", async (
-                [FromBody] ItemAddRequest request, 
+                [FromBody] ItemAddRequest request,
                 [FromServices] IItemsService itemsService,
                 CancellationToken token) =>
             {
@@ -106,11 +126,11 @@ namespace TradeCompanyIS.Endpoints
                 {
                     if (request is null) return Results.BadRequest();
                     ResultModel<Items> newItem = Items.Create(Guid.NewGuid(),
-                        request.Name, request.Description, request.Price, 
+                        request.Name, request.Description, request.Price,
                         request.IdWareHouse, request.QuantityWareHouse);
-                    if(!newItem.IsSuccess) return Results.BadRequest(newItem.Error);
+                    if (!newItem.IsSuccess) return Results.BadRequest(newItem.Error);
                     Guid resultId = await itemsService.AddAsync(newItem.Value, token);
-                    if(resultId != newItem.Value.Id)
+                    if (resultId != newItem.Value.Id)
                         return Results.BadRequest("Failed add item");
                     return Results.Ok();
                 }
@@ -122,14 +142,14 @@ namespace TradeCompanyIS.Endpoints
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/warehouse", async (
-                [FromServices] IWareHousesService warehousesService, 
+                [FromServices] IWareHousesService warehousesService,
                 CancellationToken token) =>
             {
                 try
                 {
                     List<WareHouses> wareHousesFull = await warehousesService.GetAllAsync(token);
                     List<string> wareHousesName = new List<string>();
-                    foreach(WareHouses warehouse in wareHousesFull)
+                    foreach (WareHouses warehouse in wareHousesFull)
                     {
                         wareHousesName.Add(warehouse.Address);
                     }
@@ -142,8 +162,8 @@ namespace TradeCompanyIS.Endpoints
             }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
-            app.MapGet("/item", async (Guid id, 
-                [FromServices] IItemsService itemsService, 
+            app.MapGet("/item", async (Guid id,
+                [FromServices] IItemsService itemsService,
                 CancellationToken token) =>
             {
                 try
@@ -151,7 +171,7 @@ namespace TradeCompanyIS.Endpoints
                     if (id == Guid.Empty)
                         return Results.BadRequest("Id item is empty");
                     Items? item = await itemsService.GetAsync(id, token);
-                    if(item is null) 
+                    if (item is null)
                         return Results.BadRequest("Item not found");
                     return Results.Ok(item);
                 }
@@ -162,9 +182,9 @@ namespace TradeCompanyIS.Endpoints
             }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
-            app.MapPost("/provider/add", async ( 
-                [FromBody] AddProviderRequest request, 
-                [FromServices] IProvidersService providersService, 
+            app.MapPost("/provider/add", async (
+                [FromBody] AddProviderRequest request,
+                [FromServices] IProvidersService providersService,
                 CancellationToken token) =>
             {
                 try
@@ -209,17 +229,12 @@ namespace TradeCompanyIS.Endpoints
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/providers", async (
-                [FromServices] IProvidersService providersService, 
+                [FromServices] IProvidersService providersService,
                 CancellationToken token) =>
             {
                 try
                 {
                     List<Providers> providersFull = await providersService.GetAllAsync();
-                    //List<string> providersName = new List<string>();
-                    //foreach (Providers provider in providersFull)
-                    //{ 
-                    //    providersName.Add(provider.Name);
-                    //}
                     return Results.Ok(providersFull);
                 }
                 catch
@@ -230,8 +245,8 @@ namespace TradeCompanyIS.Endpoints
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapPost("/country/id", async (
-                [FromBody] NameRequest request, 
-                [FromServices] ICountriesService countryService, 
+                [FromBody] NameRequest request,
+                [FromServices] ICountriesService countryService,
                 CancellationToken token) =>
             {
                 try
@@ -247,24 +262,48 @@ namespace TradeCompanyIS.Endpoints
                 }
             }).RequireRateLimiting("GeneralPolicy");
 
-            app.MapPost("/client/create", async (
-                [FromBody] RegClientRequest request, 
-                [FromServices] IPasswordHasherService passwordHasher, 
-                [FromServices] IClientsService clientsService, 
+            app.MapPost("/client/create", async (HttpContext context,
+                [FromBody] RegClientRequest request,
+                [FromServices] IPasswordHasherService passwordHasher,
+                [FromServices] IClientsService clientsService,
+                [FromServices] IUsersService userService,
+                [FromServices] IJwtProviderService jwtService,
                 CancellationToken token) =>
             {
                 try
                 {
                     if (request is null)
                         return Results.BadRequest("Request is null");
-                    ResultModel<Clients> client = Clients.Create(Guid.NewGuid(), 
+                    ResultModel<Clients> client = Clients.Create(Guid.NewGuid(),
                         request.NameClient, request.NumberPhone, request.Email,
                         request.IdCountry, request.AddressDelivery);
                     if (!client.IsSuccess)
                         return Results.BadRequest(client.Error);
+                    var user = Users.Create(Guid.NewGuid(), request.Username, request.Password,
+                        "user", client.Value.Id, passwordHasher);
+                    if (!user.IsSuccess) return Results.BadRequest(user.Error);
+                    if (await userService.CheckAsync(request.Username, token))
+                    {
+                        return Results.BadRequest("this login is found");
+                    }
+                    if(await clientsService.CheckAsync(request.Email, token))
+                    {
+                        return Results.BadRequest("this email is found");
+                    }
+                    var result = await userService.CreateAsync(user.Value, token);
                     var resultAdd = await clientsService.AddAsync(client.Value, token);
                     if (resultAdd != client.Value.Id)
                         return Results.BadRequest("Failed create client");
+                    var claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.Role, "user"),
+                        new Claim(ClaimTypes.Email, request.Username),
+                    };
+                    var jwttoken = jwtService.GenerateToken(new JwtRequest()
+                    {
+                        Claims = claims
+                    });
+                    context.Response.Cookies.Append("jwt", jwttoken!);
                     return Results.Ok();
                 }
                 catch
@@ -273,8 +312,8 @@ namespace TradeCompanyIS.Endpoints
                 }
             }).RequireRateLimiting("GeneralPolicy");
 
-            app.MapDelete("/user/delete/{id}", async (Guid id, 
-                [FromServices] IUsersService userService, 
+            app.MapDelete("/user/delete/{id}", async (Guid id,
+                [FromServices] IUsersService userService,
                 CancellationToken token) =>
             {
                 try
@@ -309,7 +348,7 @@ namespace TradeCompanyIS.Endpoints
             });
 
             app.MapGet("/tables", async (
-                [FromServices] ITableService tableService, 
+                [FromServices] ITableService tableService,
                 CancellationToken token) =>
             {
                 try
@@ -341,7 +380,7 @@ namespace TradeCompanyIS.Endpoints
             }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
 
-            app.MapPost("/change-password", async ( HttpContext context,
+            app.MapPost("/change-password", async (HttpContext context,
                 [FromBody] ChangePasswordRequest request,
                 [FromServices] IUsersService userService,
                 [FromServices] IJwtProviderService jwtService,
@@ -354,7 +393,7 @@ namespace TradeCompanyIS.Endpoints
                         return Results.BadRequest("login or password is empty");
                     string roleUser = await userService.GetRoleAsync(request.Username, token);
                     var user = Users.Create(Guid.NewGuid(), request.Username, request.Password,
-                        roleUser, passwordHasher);
+                        roleUser, Guid.Empty, passwordHasher);
                     if (!user.IsSuccess) return Results.BadRequest(user.Error);
                     await userService.UpdatePasswordAsync(user.Value.Username, user.Value.HashPassword, token);
                     return Results.Ok();
@@ -374,8 +413,8 @@ namespace TradeCompanyIS.Endpoints
                 {
                     if (string.IsNullOrEmpty(users))
                         return Results.BadRequest("Login is empty");
-                    Guid userId = await userService.GetIdByUsernameAsync(users, token);
-                    await userService.DeleteAsync(userId, token);   
+                    Guid userId = await userService.GetIdClientByUsernameAsync(users, token);
+                    await userService.DeleteAsync(userId, token);
                     return Results.Ok();
                 }
                 catch
@@ -398,11 +437,11 @@ namespace TradeCompanyIS.Endpoints
                 {
                     return Results.InternalServerError();
                 }
-            }).RequireAuthorization("OnlyForAuthClient")
+            })
             .RequireRateLimiting("GeneralPolicy");
 
             app.MapGet("/items", async (
-                [FromServices] IItemsService itemService, 
+                [FromServices] IItemsService itemService,
                 CancellationToken token) =>
             {
                 try
@@ -426,7 +465,7 @@ namespace TradeCompanyIS.Endpoints
                 {
                     if (request is null)
                         return Results.BadRequest("Request is null");
-                    ResultModel<Supplies> supply = Supplies.Create(Guid.NewGuid(), request.IdProvider, 
+                    ResultModel<Supplies> supply = Supplies.Create(Guid.NewGuid(), request.IdProvider,
                         request.IdWarehouse, request.IdItem, request.Quantity, request.Price);
                     if (!supply.IsSuccess)
                         return Results.BadRequest(supply.Error);

@@ -56,5 +56,14 @@ namespace TradeCompanyIS.DataAccess.Postgres.Repositories
             return Clients.Create(clientEntity.Id, clientEntity.NameClient, clientEntity.NumberPhone,
                 clientEntity.Email, clientEntity.IdCountry, clientEntity.AddressDelivery).Value;
         }
+
+        public async Task<bool> CheckAsync(string email, CancellationToken token)
+        {
+            ClientsEntity? clientEntity = await _context.ClientsTable
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Email == email, token);
+            if (clientEntity is null) return false;
+            return true;
+        }
     }
 }

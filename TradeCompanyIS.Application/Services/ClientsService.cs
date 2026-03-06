@@ -24,9 +24,13 @@ namespace TradeCompanyIS.Application.Services
         {
             return await _repository.GetAsync(id, token);
         }
-        public async Task<Guid> GetIdByEmail(string email, CancellationToken token)
+        public async Task<Guid> GetIdByEmailAsync(string email, CancellationToken token)
         {
             return await _repository.GetIdByEmail(email, token);
+        }
+        public async Task<bool> CheckAsync(string email, CancellationToken token)
+        {
+            return await _repository.CheckAsync(email, token);
         }
     }
 }
