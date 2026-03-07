@@ -283,13 +283,42 @@
             document.getElementById('loading').style.display = 'none';
         }
 
-        function redirectToUserPage(username) {
-            if (username === 'admin') {
-                window.location.href = '/adminPage';
-            } else if (username === 'merchandiser') {
-                window.location.href = '/sallerPage';
-            } else {
-                window.location.href = '/clientPage';
+        function redirectToUserPage(role) {
+            switch (role) {
+                case 'admin':
+                    window.location.href = '/adminPage';
+                    break;
+                case 'productSpec':
+                    window.location.href = '/sallerPage';
+                    break;
+                case 'user':
+                    window.location.href = '/clientPage';
+                    break;
+                default:
+                    console.warn('Unknown role:', role);
+                    window.location.href = '/clientPage';
+            }
+        }
+
+        function getRoleFromJWT() {
+            try {
+                const cookies = document.cookie.split(';');
+                const jwtCookie = cookies.find(c => c.trim().startsWith('jwt='));
+
+                if (!jwtCookie) return null;
+
+                const token = jwtCookie.split('=')[1];
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const payload = JSON.parse(window.atob(base64));
+
+                return payload.role ||
+                    payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
+                    payload.roleuser ||
+                    null;
+            } catch (error) {
+                console.error('Error decoding JWT:', error);
+                return null;
             }
         }
 
@@ -334,7 +363,36 @@
 
                     if (response.ok) {
                         setTimeout(() => {
-                            redirectToUserPage(username);
+                            const role = getRoleFromJWT();
+
+                            if (role) {
+                                console.log('User role:', role);
+                                redirectToUserPage(role);
+                            } else {
+                                console.error('Role not found in JWT');
+                                response.json().then(data => {
+                                    if (data && data.role) {
+                                        redirectToUserPage(data.role);
+                                    } else {
+                                        console.warn('Using fallback redirect by username');
+                                        if (username === 'admin') {
+                                            window.location.href = '/adminPage';
+                                        } else if (username === 'productSpec') {
+                                            window.location.href = '/sallerPage';
+                                        } else {
+                                            window.location.href = '/clientPage';
+                                        }
+                                    }
+                                }).catch(() => {
+                                    if (username === 'admin') {
+                                        window.location.href = '/adminPage';
+                                    } else if (username === 'productSpec') {
+                                        window.location.href = '/sallerPage';
+                                    } else {
+                                        window.location.href = '/clientPage';
+                                    }
+                                });
+                            }
                         }, 500);
                     } else {
                         const errorText = await response.text();

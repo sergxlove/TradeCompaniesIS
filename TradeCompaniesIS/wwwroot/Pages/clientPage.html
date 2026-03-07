@@ -693,7 +693,6 @@
             return response;
         }
 
-        // Загрузка списка стран
         async function loadCountries() {
             try {
                 const response = await apiRequest('/countries', 'GET');
@@ -713,7 +712,6 @@
             }
         }
 
-        // Функция для декодирования JWT и получения email
         function getEmailFromJWT() {
             try {
                 const cookies = document.cookie.split(';');
@@ -733,7 +731,6 @@
             }
         }
 
-        // Функция для получения clientId по email из UsersTable
         async function getClientIdByEmail(email) {
             try {
                 const encodedEmail = encodeURIComponent(email);
@@ -746,7 +743,6 @@
             }
         }
 
-        // Основная функция инициализации
         async function initializeClientData() {
             const emailFromToken = getEmailFromJWT();
 
@@ -867,7 +863,6 @@
             }
         }
 
-        // Загрузка всех товаров
         async function loadAllItems() {
             const resultsContainer = document.getElementById('availability-results');
             resultsContainer.innerHTML = '<div class="loading"><div class="spinner"></div>Загрузка товаров...</div>';
@@ -882,7 +877,6 @@
             }
         }
 
-        // Поиск товаров по названию
         async function searchItems() {
             const searchValue = document.getElementById('availability-search').value.trim();
             const resultsContainer = document.getElementById('availability-results');
@@ -897,10 +891,8 @@
             try {
                 const response = await apiRequest(`/items/search/${encodeURIComponent(searchValue)}`, 'GET');
 
-                // Проверяем, что ответ - это массив
                 const items = await response.json();
 
-                // Если пришел не массив, а одиночный объект, преобразуем в массив
                 const itemsArray = Array.isArray(items) ? items : [items];
 
                 displayItems(itemsArray);
@@ -910,7 +902,6 @@
             }
         }
 
-        // Отображение товаров
         function displayItems(items) {
             const container = document.getElementById('availability-results');
 
@@ -922,7 +913,6 @@
             container.innerHTML = '';
 
             items.forEach(item => {
-                // Проверяем структуру объекта item
                 const name = item.name || item.Name || 'Без названия';
                 const price = item.price || item.Price || 0;
                 const description = item.description || item.Description || 'Нет описания';
@@ -953,7 +943,6 @@
             });
         }
 
-        // Функция для экранирования HTML специальных символов
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
@@ -961,7 +950,6 @@
             return div.innerHTML;
         }
 
-        // Быстрый заказ из каталога
         async function quickOrder(itemId, itemName) {
             const quantity = prompt(`Введите количество для товара "${itemName}"`, "1");
 
@@ -990,7 +978,6 @@
 
                 alert(`Заказ на товар "${itemName}" успешно оформлен!`);
 
-                // Переходим на страницу заказов
                 document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
                 document.querySelector('.nav-item[data-page="orders"]').classList.add('active');
                 document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
@@ -1060,12 +1047,8 @@
                     await apiRequest('/logout', 'GET');
                 } catch (error) {
                     console.error('Logout error:', error);
-                } finally {
-                    localStorage.removeItem('clientId');
-                    localStorage.removeItem('userEmail');
-                    document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    window.location.href = '/login';
                 }
+                window.location.href = '/loginPage';
             }
         }
 

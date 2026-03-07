@@ -78,15 +78,15 @@ namespace TradeCompaniesIS
             {
                 options.AddPolicy("OnlyForAdmin", policy =>
                 {
-                    policy.RequireClaim(ClaimTypes.Role, "admin");
+                    policy.RequireRole("admin");
                 });
                 options.AddPolicy("OnlyForAuthClient", policy =>
                 {
-                    policy.RequireClaim(ClaimTypes.Role, "user");
+                    policy.RequireRole("user", "admin", "productSpec");
                 });
                 options.AddPolicy("OnlyForProductSpec", policy =>
                 {
-                    policy.RequireClaim(ClaimTypes.Role, "productSpec");
+                    policy.RequireRole("productSpec", "admin");
                 });
             });
 

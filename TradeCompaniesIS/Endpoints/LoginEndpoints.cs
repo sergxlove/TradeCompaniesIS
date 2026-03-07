@@ -24,9 +24,10 @@ namespace TradeCompanyIS.Endpoints
                         return Results.BadRequest("login or password is empty");
                     if (!await userService.VerifyAsync(request.Username, request.Password, token))
                         return Results.BadRequest("no auth");
+                    string role = await userService.GetRoleAsync(request.Username, token);
                     var claims = new List<Claim>()
                     {
-                        new Claim(ClaimTypes.Role, "user"),
+                        new Claim(ClaimTypes.Role, role),
                         new Claim(ClaimTypes.Email, request.Username)
                     };
                     var jwttoken = jwtService.GenerateToken(new JwtRequest()
