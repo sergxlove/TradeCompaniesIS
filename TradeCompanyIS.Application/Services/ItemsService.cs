@@ -40,5 +40,9 @@ namespace TradeCompanyIS.Application.Services
         {
             return await _repository.GetAllAsync(token);
         }
+        public async Task<List<Items>> GetByNameAsync(string name, CancellationToken token)
+        {
+            return await _repository.GetByNameAsync(name, token);
+        }
     }
 }

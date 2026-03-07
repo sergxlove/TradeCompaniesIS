@@ -11,5 +11,6 @@ namespace TradeCompanyIS.Application.Abstractions
         Task<int> UpdateQuantityAsync(Guid id, int quantity, CancellationToken token);
         Task<Items?> GetAsync(Guid id, CancellationToken token);
         Task<List<Items>> GetAllAsync(CancellationToken token);
+        Task<List<Items>> GetByNameAsync(string name, CancellationToken token);
     }
 }

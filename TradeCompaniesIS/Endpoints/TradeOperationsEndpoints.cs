@@ -481,7 +481,7 @@ namespace TradeCompanyIS.Endpoints
                 {
                     if (string.IsNullOrEmpty(name))
                         return Results.BadRequest("Name is empty");
-                    var result = await itemService.GetIdByNameAsync(name, token);
+                    var result = await itemService.GetByNameAsync(name, token);
                     return Results.Ok(result);
                 }
                 catch

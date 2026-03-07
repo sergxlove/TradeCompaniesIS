@@ -547,9 +547,6 @@
             <div class="nav-item" data-page="orders">
                 📦 Мои заказы
             </div>
-            <div class="nav-item" data-page="new-order">
-                🛒 Новый заказ
-            </div>
             <div class="nav-item" data-page="availability">
                 📊 Наличие товаров
             </div>
@@ -640,25 +637,6 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
-            </div>
-
-            <div class="page" id="new-order-page">
-                <h1 class="page-title">Новый заказ</h1>
-                <p class="page-subtitle">Создание нового заказа</p>
-
-                <div class="new-order-form">
-                    <div class="form-group">
-                        <label>ID товара</label>
-                        <input type="text" id="order-item-id" placeholder="Введите ID товара">
-                    </div>
-                    <div class="form-group">
-                        <label>Количество</label>
-                        <input type="number" id="order-quantity" min="1" value="1">
-                    </div>
-                    <div class="form-actions">
-                        <button class="save-btn" onclick="submitOrder()">Оформить заказ</button>
-                    </div>
                 </div>
             </div>
 
@@ -889,58 +867,6 @@
             }
         }
 
-        async function submitOrder() {
-            if (isSubmitting) return;
-
-            const itemId = document.getElementById('order-item-id').value.trim();
-            const quantity = parseInt(document.getElementById('order-quantity').value);
-
-            if (!itemId) {
-                alert('Введите ID товара');
-                return;
-            }
-
-            if (!quantity || quantity < 1) {
-                alert('Введите корректное количество');
-                return;
-            }
-
-            if (!clientId) {
-                const initialized = await initializeClientData();
-                if (!initialized) {
-                    alert('ID клиента не найден');
-                    return;
-                }
-            }
-
-            isSubmitting = true;
-
-            try {
-                await apiRequest('/client/order/create', 'POST', {
-                    idClients: clientId,
-                    idItem: itemId,
-                    quantity: quantity
-                });
-
-                alert('Заказ успешно оформлен!');
-
-                document.getElementById('order-item-id').value = '';
-                document.getElementById('order-quantity').value = '1';
-
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                document.querySelector('.nav-item[data-page="orders"]').classList.add('active');
-                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-                document.getElementById('orders-page').classList.add('active');
-
-                loadClientOrders();
-
-            } catch (error) {
-                alert(error.message || 'Ошибка при оформлении заказа');
-            } finally {
-                isSubmitting = false;
-            }
-        }
-
         // Загрузка всех товаров
         async function loadAllItems() {
             const resultsContainer = document.getElementById('availability-results');
@@ -970,8 +896,14 @@
 
             try {
                 const response = await apiRequest(`/items/search/${encodeURIComponent(searchValue)}`, 'GET');
+
+                // Проверяем, что ответ - это массив
                 const items = await response.json();
-                displayItems(items);
+
+                // Если пришел не массив, а одиночный объект, преобразуем в массив
+                const itemsArray = Array.isArray(items) ? items : [items];
+
+                displayItems(itemsArray);
             } catch (error) {
                 console.error('Error searching items:', error);
                 resultsContainer.innerHTML = '<div class="loading">Ошибка при поиске</div>';
@@ -990,28 +922,43 @@
             container.innerHTML = '';
 
             items.forEach(item => {
-                const stockStatus = item.quantityWareHouse > 0 ? 'В наличии' : 'Нет в наличии';
-                const stockClass = item.quantityWareHouse > 0 ? 'stock-available' : 'stock-out';
+                // Проверяем структуру объекта item
+                const name = item.name || item.Name || 'Без названия';
+                const price = item.price || item.Price || 0;
+                const description = item.description || item.Description || 'Нет описания';
+                const quantity = item.quantityWareHouse || item.QuantityWareHouse || 0;
+                const id = item.id || item.Id;
+
+                const stockStatus = quantity > 0 ? 'В наличии' : 'Нет в наличии';
+                const stockClass = quantity > 0 ? 'stock-available' : 'stock-out';
 
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 card.innerHTML = `
                         <div class="product-header">
-                            <h3 class="product-title">${item.name || 'Без названия'}</h3>
-                            <span class="product-price">${formatCurrency(item.price || 0)}</span>
+                            <h3 class="product-title">${escapeHtml(name)}</h3>
+                            <span class="product-price">${formatCurrency(price)}</span>
                         </div>
-                        <p class="product-description">${item.description || 'Нет описания'}</p>
+                        <p class="product-description">${escapeHtml(description)}</p>
                         <div class="product-stock">
                             <span class="stock-badge ${stockClass}">${stockStatus}</span>
-                            <span>Остаток: ${item.quantityWareHouse || 0} шт.</span>
+                            <span>Остаток: ${quantity} шт.</span>
                         </div>
-                        <button class="order-btn" onclick="quickOrder('${item.id}', '${item.name}')"
-                            ${item.quantityWareHouse === 0 ? 'disabled' : ''}>
+                        <button class="order-btn" onclick="quickOrder('${id}', '${escapeHtml(name)}')"
+                            ${quantity === 0 ? 'disabled' : ''}>
                             Заказать
                         </button>
                     `;
                 container.appendChild(card);
             });
+        }
+
+        // Функция для экранирования HTML специальных символов
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Быстрый заказ из каталога
@@ -1141,7 +1088,7 @@
                             loadClientOrders();
                             break;
                         case 'availability':
-                            loadAllItems(); // Загружаем все товары при переходе на вкладку
+                            loadAllItems();
                             break;
                     }
                 });
