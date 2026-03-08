@@ -1,0 +1,358 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бэкап БД</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #475569;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231e293b"/><path d="M20,20 L80,20 L80,80 L20,80 Z" stroke="%23334155" stroke-width="2" fill="none"/></svg>');
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .backup-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+            .logo h1 {
+                font-size: 28px;
+                font-weight: 700;
+                background: linear-gradient(135deg, var(--accent), #8b5cf6);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 8px;
+            }
+
+            .logo p {
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+            .btn:hover {
+                background: var(--accent-hover);
+                transform: translateY(-2px);
+            }
+
+            .btn:active {
+                transform: translateY(0);
+            }
+
+            .btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .message {
+            padding: 12px;
+            margin-top: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease;
+            display: none;
+        }
+
+            .message.success {
+                background: rgba(16, 185, 129, 0.2);
+                color: var(--success);
+                border: 1px solid var(--success);
+            }
+
+            .message.error {
+                background: rgba(239, 68, 68, 0.2);
+                color: var(--danger);
+                border: 1px solid var(--danger);
+            }
+
+            .message.info {
+                background: rgba(59, 130, 246, 0.2);
+                color: var(--accent);
+                border: 1px solid var(--accent);
+            }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+            text-align: center;
+        }
+
+            .back-link:hover {
+                text-decoration: underline;
+            }
+
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            word-break: break-all;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+            .file-info strong {
+                color: var(--text-primary);
+            }
+
+        .version {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 480px) {
+            .backup-card {
+                padding: 30px 20px;
+            }
+
+            .logo h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="backup-card">
+            <div class="logo">
+                <h1>📦 Бэкап БД</h1>
+                <p>Создание резервной копии базы данных</p>
+            </div>
+
+            <button class="btn" id="backupBtn" onclick="createBackup()">
+                <span>💾</span> Создать и скачать бэкап
+            </button>
+
+            <div class="loading" id="spinner">
+                <div class="spinner"></div>
+                <p style="color: var(--text-secondary);">Создание и загрузка бэкапа...</p>
+            </div>
+
+            <div class="message" id="message"></div>
+            <div class="file-info" id="fileInfo"></div>
+
+            <a href="/Pages/index.html" class="back-link">← На главную</a>
+
+            <div class="version">
+                Версия 1.0.0 • Система управления
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const backupBtn = document.getElementById('backupBtn');
+        const spinner = document.getElementById('spinner');
+        const messageDiv = document.getElementById('message');
+        const fileInfo = document.getElementById('fileInfo');
+
+        function getTokenFromCookie() {
+            const cookies = document.cookie.split(';');
+            const jwtCookie = cookies.find(c => c.trim().startsWith('jwt='));
+
+            if (jwtCookie) {
+                return jwtCookie.split('=')[1];
+            }
+            return null;
+        }
+
+        async function createBackup() {
+            try {
+                backupBtn.disabled = true;
+                spinner.style.display = 'block';
+                hideMessage();
+                fileInfo.style.display = 'none';
+
+                const token = getTokenFromCookie();
+
+                const headers = {
+                    'Accept': 'application/json'
+                };
+
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                const response = await fetch('/api/backup/create', {
+                    method: 'GET',
+                    headers: headers,
+                    credentials: 'include' 
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        throw new Error('Не авторизован. Выполните вход');
+                    } else if (response.status === 403) {
+                        throw new Error('Доступ запрещен');
+                    } else {
+                        const errorText = await response.text();
+                        throw new Error(errorText || 'Ошибка сервера');
+                    }
+                }
+
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let fileName = `backup_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.sql`;
+
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                    if (match && match[1]) {
+                        fileName = match[1].replace(/['"]/g, '');
+                    }
+                }
+
+                const blob = await response.blob();
+
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = fileName;
+                link.style.display = 'none';
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                window.URL.revokeObjectURL(downloadUrl);
+
+                const fileSize = (blob.size / 1024).toFixed(2);
+                fileInfo.style.display = 'block';
+                fileInfo.innerHTML = `
+                    <strong>✅ Файл скачан:</strong><br>
+                    <span style="color: var(--text-primary);">📄 ${fileName}</span><br>
+                    <span style="color: var(--text-primary);">💾 ${fileSize} KB</span>
+                `;
+
+                showMessage('✅ Бэкап успешно создан и скачан!', 'success');
+
+            } catch (error) {
+                showMessage('❌ Ошибка: ' + error.message, 'error');
+                console.error('Backup error:', error);
+            } finally {
+                backupBtn.disabled = false;
+                spinner.style.display = 'none';
+            }
+        }
+
+        function showMessage(text, type) {
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+            messageDiv.style.display = 'block';
+
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+                messageDiv.className = 'message';
+            }, 5000);
+        }
+
+        function hideMessage() {
+            messageDiv.style.display = 'none';
+            messageDiv.className = 'message';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = getTokenFromCookie();
+        });
+    </script>
+</body>
+</html>

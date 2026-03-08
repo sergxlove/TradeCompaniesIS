@@ -49,6 +49,13 @@
             }).RequireAuthorization("OnlyForProductSpec")
             .RequireRateLimiting("GeneralPolicy");
 
+            app.MapGet("/backupPage", async (HttpContext context) =>
+            {
+                context.Response.ContentType = "text/html; charset=utf-8";
+                await context.Response.SendFileAsync("wwwroot/Pages/backupPage.html");
+            }).RequireAuthorization("OnlyForAdmin")
+            .RequireRateLimiting("GeneralPolicy");
+
             return app;
         }
     }
