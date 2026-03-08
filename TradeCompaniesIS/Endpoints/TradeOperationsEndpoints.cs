@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Security.Claims;
+using System.Text;
 using TradeCompanyIS.Application.Abstractions;
 using TradeCompanyIS.Application.Requests;
 using TradeCompanyIS.Application.Services;
@@ -516,6 +518,42 @@ namespace TradeCompanyIS.Endpoints
                 }
             }).RequireAuthorization("OnlyForAuthClient")
             .RequireRateLimiting("GeneralPolicy");
+
+            app.MapGet("/api/backup/create", async () =>
+            {
+                string fileName = $"backup_{DateTime.Now:yyyyMMdd_HHmmss}.sql";
+                string containerName = "postgres-container";
+                try
+                {
+                    var process = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "docker",
+                            Arguments = $"exec {containerName} pg_dump -U postgres -d db",
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            StandardOutputEncoding = Encoding.UTF8
+                        }
+                    };
+                    process.Start();
+                    string output = await process.StandardOutput.ReadToEndAsync();
+                    string error = await process.StandardError.ReadToEndAsync();
+                    await process.WaitForExitAsync();
+                    if (process.ExitCode != 0)
+                    {
+                        return Results.BadRequest($"Ошибка pg_dump: {error}");
+                    }
+                    var fileBytes = Encoding.UTF8.GetBytes(output);
+                    return Results.File(fileBytes, "application/octet-stream", fileName);
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest($"Ошибка: {ex.Message}");
+                }
+            }).RequireAuthorization("OnlyForAuthClient");
 
             return app;
         }
